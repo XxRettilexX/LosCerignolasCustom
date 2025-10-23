@@ -76,6 +76,28 @@ L’utente può uscire dall’app.
 - L’app effettua il **reset dello stack di navigazione** per proteggere la sessione.
 <img width="479" height="648" alt="uml" src="https://github.com/user-attachments/assets/9661bda2-5713-41b9-a3e1-21530f6dcb3d" />
 
+# ⚙️ Good & Bad Practice
 
+## ✅ Good Practice
+- **Autenticazione sicura e fluida**  
+  Gestione chiara di login, errori e recupero password.
+- **Navigazione coerente**  
+  Uso combinato di *Bottom Tab Bar* e *Stack Navigation*, con percorsi prevedibili e coerenti.
+- **Sessione protetta**  
+  Reset completo dello stack dopo il logout e invalidazione del token utente.
+- **Esperienza utente curata**  
+  Feedback visivi, messaggi chiari e attenzione all’accessibilità.
+
+---
+
+## ❌ Bad Practice
+- **Login forzato senza contesto**  
+  Obbligare l’utente ad autenticarsi subito, senza contenuti introduttivi.
+- **Navigazione confusa**  
+  Percorsi duplicati o mancanza del pulsante “indietro”.
+- **Gestione sessione inefficace**  
+  Possibilità di tornare a schermate protette dopo il logout.
+- **Assenza di feedback**  
+  Nessuna indicazione durante caricamenti o errori
 ---
 
