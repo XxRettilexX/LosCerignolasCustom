@@ -74,7 +74,8 @@ Il cliente esplora i menù disponibili e visualizza i dettagli dei prodotti.
 ### 4️⃣ Logout / Gestione sessione
 L’utente può uscire dall’app.  
 - L’app effettua il **reset dello stack di navigazione** per proteggere la sessione.
-![WhatsApp Image 2025-10-11 at 12 15 42](https://github.com/user-attachments/assets/9cc142ca-0ff7-4189-8f45-eb23cf668843)
+<img width="479" height="648" alt="uml" src="https://github.com/user-attachments/assets/9661bda2-5713-41b9-a3e1-21530f6dcb3d" />
+
 
 ---
 
