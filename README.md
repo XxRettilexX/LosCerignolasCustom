@@ -29,9 +29,11 @@ un simpatico **pollo pizzaiolo** con cappello da chef, sempre pronto a sfornare 
 L’obiettivo principale del progetto è creare un’app **semplice e funzionale** che consenta all’utente di:
 
 - 🍽️ Navigare tra i diversi menù  
-- 👀 Visualizzare i prodotti disponibili  
+- 👀 Visualizzare i prodotti disponibili
+- 💰 Completare acquisti **in app**
+- ⭐ Accumulare punti con gli acquisti per vincere **promozioni e sconti** 
 - 🔐 Gestire la propria sessione in modo sicuro e fluido
-- ⭐ Accumulare punti con gli acquisti per vincere **promozioni e sconti**
+
 
 ---
 
