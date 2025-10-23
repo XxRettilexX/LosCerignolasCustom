@@ -1,50 +1,79 @@
-# Welcome to your Expo app 👋
+# 🌮 Los Cerignola
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**Los Cerignola** è un’app sviluppata con **React Native (Expo)** che permette di esplorare in modo intuitivo i menù disponibili e visualizzare i prodotti offerti da una pizzeria.
 
-## Get started
+---
 
-1. Install dependencies
+## 🎨 Identità Visiva
 
-   ```bash
-   npm install
-   ```
+### 🌈 Palette Colori
 
-2. Start the app
+| Ruolo | Colore | Codice |
+|:------|:--------|:-------|
+| **Primario** | 🟡 Giallo | `#FFD60A` |
+| **Secondario** | 🔵 Blu | `#004AAD` |
+| **Sfondo Chiaro** | ⚪ Crema | `#FFF7E0` |
+| **Testo / Contrasto** | ⚫ Blu Notte | `#001D3D` |
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## 🐔 Mascotte — “Cerigno”
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+**Cerigno** è la mascotte ufficiale di *Los Cerignola*:  
+un simpatico **pollo pizzaiolo** con cappello da chef, sempre pronto a sfornare pizze perfette! 🍕🔥  
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## 🎯 Obiettivo
 
-When you're ready, run:
+L’obiettivo principale del progetto è creare un’app **semplice e funzionale** che consenta all’utente di:
 
-```bash
-npm run reset-project
-```
+- 🍽️ Navigare tra i diversi menù  
+- 👀 Visualizzare i prodotti disponibili  
+- 🔐 Gestire la propria sessione in modo sicuro e fluido  
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## ⚙️ Funzionalità principali
 
-To learn more about developing your project with Expo, look at the following resources:
+### 🔐 Flusso di Autenticazione
+Schermata di login per proteggere l’accesso all’area principale dell’app.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 📚 Navigazione a Stack
+Gestione della navigazione gerarchica tra le schermate (es. lista prodotti → dettaglio prodotto).
 
-## Join the community
+### 📱 Navigazione a Schede (Tabs)
+Una comoda **Bottom Tab Bar** per muoversi tra le sezioni principali: **Home**, **Ordini** e **Profilo**.
 
-Join our community of developers creating universal apps.
+### 🔄 Gestione della Sessione
+Utilizzo del **reset dello stack di navigazione** per garantire un’esperienza di login/logout senza interruzioni.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### 🛒 Gestione degli Acquisti
+Possibilità di acquisto tramite **carrello interattivo**.
+
+### 📍 Gestione della Posizione
+Visualizzazione sulla mappa dei **punti vendita più vicini** al cliente.
+
+---
+
+## 📋 Casi d’Uso Principali
+
+### 1️⃣ Autenticazione
+Il cliente accede all’app tramite **login**.  
+- Senza autenticazione non può inserire i prodotti nel carrello.  
+- Alternative: recupero password o messaggio di errore se credenziali errate.
+
+### 2️⃣ Navigazione tra le schermate
+Il cliente naviga tra le sezioni dell’app tramite la **Bottom Tab Bar** o la **navigazione a stack**.  
+- Alternativa: l’utente può tornare alla pagina principale tramite lo stack navigation.
+
+### 3️⃣ Visualizzazione menù e prodotti
+Il cliente esplora i menù disponibili e visualizza i dettagli dei prodotti.  
+- Estensione: possibilità di **filtrare i prodotti** o **cercare per nome**.
+
+### 4️⃣ Logout / Gestione sessione
+L’utente può uscire dall’app.  
+- L’app effettua il **reset dello stack di navigazione** per proteggere la sessione.
+
+---
+
