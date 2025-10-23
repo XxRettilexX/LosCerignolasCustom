@@ -21,6 +21,7 @@
 
 **Cerigno** è la mascotte ufficiale di *Los Cerignola*:  
 un simpatico **pollo pizzaiolo** con cappello da chef, sempre pronto a sfornare pizze perfette! 🍕🔥  
+![WhatsApp Image 2025-10-23 at 19 17 56](https://github.com/user-attachments/assets/68623421-12b7-4fd2-b1ea-2919e0ac8bb9)
 
 ---
 
