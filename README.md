@@ -77,7 +77,7 @@ Il cliente esplora i menù disponibili e visualizza i dettagli dei prodotti.
 ### 4️⃣ Logout / Gestione sessione
 L’utente può uscire dall’app.  
 - L’app effettua il **reset dello stack di navigazione** per proteggere la sessione.
-<img width="479" height="648" alt="uml" src="https://github.com/user-attachments/assets/9661bda2-5713-41b9-a3e1-21530f6dcb3d" />
+<img width="479" height="648" alt="uml" src="https://github.com/user-attachments/assets/f23aa302-8e44-4a4e-b2c7-d1e6f4baabef" />
 
 # ⚙️ Good & Bad Practice
 
