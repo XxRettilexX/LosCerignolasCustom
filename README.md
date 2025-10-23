@@ -30,7 +30,8 @@ L’obiettivo principale del progetto è creare un’app **semplice e funzionale
 
 - 🍽️ Navigare tra i diversi menù  
 - 👀 Visualizzare i prodotti disponibili  
-- 🔐 Gestire la propria sessione in modo sicuro e fluido  
+- 🔐 Gestire la propria sessione in modo sicuro e fluido
+- ⭐ Accumulare punti con gli acquisti per vincere **promozioni e sconti**
 
 ---
 
