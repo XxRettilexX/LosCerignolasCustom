@@ -63,8 +63,8 @@ Visualizzazione sulla mappa dei **punti vendita più vicini** al cliente.
 
 ### 1️⃣ Autenticazione
 Il cliente accede all’app tramite **login**.  
-- Senza autenticazione non può inserire i prodotti nel carrello.  
-- Alternative: recupero password o messaggio di errore se credenziali errate.
+- Senza autenticazione non può inserire i prodotti nel carrello.
+- Alternativa: il cliente può visualizzare solo la pagina principale 
 
 ### 2️⃣ Navigazione tra le schermate
 Il cliente naviga tra le sezioni dell’app tramite la **Bottom Tab Bar** o la **navigazione a stack**.  
