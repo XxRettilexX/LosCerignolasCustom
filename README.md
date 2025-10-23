@@ -40,7 +40,7 @@ L’obiettivo principale del progetto è creare un’app **semplice e funzionale
 ## ⚙️ Funzionalità principali
 
 ### 🔐 Flusso di Autenticazione
-Schermata di login per proteggere l’accesso all’area principale dell’app.
+Schermata di login per proteggere l’accesso all’area principale dell’app e permette all’utente di **tenere traccia dei punti accumulati** e di **riscattare le promozioni** ottenute attraverso gli acquisti.
 
 ### 📚 Navigazione a Stack
 Gestione della navigazione gerarchica tra le schermate (es. lista prodotti → dettaglio prodotto).
