@@ -140,7 +140,7 @@ Gestire il proprio account, **accumulare punti fedeltà** e **riscattare premi**
 **Utente:** Cliente autenticato  
 **Schermata:** `Menù`  
 **Flusso:**
-- Identico al caso d’uso *1.1*, ma con utente loggato.
+- Identico al caso d’uso per il **gust**, ma con utente loggato.
 
 ---
 
