@@ -238,7 +238,7 @@ Gestire il proprio account, **accumulare punti fedeltà** e **riscattare premi**
 
 **Avvio (Splash Screen)**: Il flusso inizia dalla schermata splash. L'utente ha due opzioni: scansionare il QR code.
 
-**Menù**: Premendo "Apri App", l'utente accede alla schermata principale del Menù, dove può visualizzare l'elenco dei prodotti disponibili.
+**Menù**: L'utente accede alla schermata principale del Menù, dove può visualizzare l'elenco dei prodotti disponibili.
 
 **Dettaglio Prodotto**: Selezionando un prodotto specifico dal menù (come la "Pizza Margherita"), l'utente viene indirizzato alla relativa pagina di Dettaglio Prodotto, che mostra un'immagine ingrandita, il nome, il prezzo e il pulsante "Aggiungi al Carrello".
 
