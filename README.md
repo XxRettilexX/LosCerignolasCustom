@@ -140,7 +140,7 @@ Gestire il proprio account, **accumulare punti fedeltà** e **riscattare premi**
 **Utente:** Cliente autenticato  
 **Schermata:** `Menù`  
 **Flusso:**
-- Identico al caso d’uso per il **gust**, ma con utente loggato.
+- Identico al caso d’uso per il **guest**, ma con utente loggato.
 
 ---
 
@@ -149,7 +149,7 @@ Gestire il proprio account, **accumulare punti fedeltà** e **riscattare premi**
 **Utente:** Cliente  
 **Schermata:** `Carrello / Checkout`  
 **Flusso:**
-1. Il cliente accede al carrello (dati precompilati).
+1. Il cliente accede al carrello.
 2. Conferma l’ordine.
 
 **Post-condizione:**
@@ -184,20 +184,9 @@ Gestire il proprio account, **accumulare punti fedeltà** e **riscattare premi**
 
 #### 🚪 Flusso (Logout)
 1. Il cliente seleziona *Esci*.
-2. L'app cancella la sessione, resetta lo stack di navigazione e torna allo stato *Guest*.
-
+2. L'app cancella la sessione, resetta lo stack di navigazione e torna allo stato *Guest*
+3. 
 ---
-
-## 🧩 Riassunto Percorsi
-
-| Stato Utente | Accesso Funzionalità | Punti Fedeltà | Storico Ordini | Riscatto Premi |
-|---------------|----------------------|----------------|----------------|----------------|
-| **Guest** | Menù, Carrello, Checkout | ❌ | ❌ | ❌ |
-| **Cliente** | Home, Menù, Ordini, Profilo | ✅ | ✅ | ✅ |
-
----
-
-<img width="479" height="648" alt="uml2" src="https://github.com/user-attachments/assets/db9795c0-9213-4c0b-862d-31239301a848" />
 
 # ⚙️ Good & Bad Practice
 
