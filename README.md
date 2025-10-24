@@ -60,24 +60,142 @@ Visualizzazione sulla mappa dei **punti vendita più vicini** al cliente.
 
 ---
 
-## 📋 Casi d’Uso Principali
+# 📱 Casi d’Uso – Applicazione
 
-### 1️⃣ Autenticazione
-Il cliente accede all’app tramite **login**.  
-- Senza autenticazione non può accedere alla raccolta punti.
-- Alternativa: il cliente può effettuare ordini tramite app.
+L'applicazione prevede due percorsi di utilizzo principali, basati sullo **stato di autenticazione** dell'utente.
 
-### 2️⃣ Navigazione tra le schermate
-Il cliente naviga tra le sezioni dell’app tramite la **Bottom Tab Bar** o la **navigazione a stack**.  
-- Alternativa: l’utente può tornare alla pagina principale tramite lo stack navigation.
+- **Percorso Guest (Non Autenticato)** → Permette esclusivamente di navigare il menù e completare un ordine.
+- **Percorso Cliente (Autenticato)** → Sblocca tutte le funzionalità, inclusa la raccolta punti, lo storico ordini e la riscossione di premi.
 
-### 3️⃣ Visualizzazione menù e prodotti
-Il cliente esplora i menù disponibili e visualizza i dettagli dei prodotti.  
-- Estensione: possibilità di **filtrare i prodotti** o **cercare per nome**.
+---
 
-### 4️⃣ Logout / Gestione sessione
-L’utente può uscire dall’app.  
-- L’app effettua il **reset dello stack di navigazione** per proteggere la sessione.
+## 🚀 Avvio dell'Applicazione
+
+All'avvio, l'app verifica lo stato di autenticazione dell'utente:
+
+- **Se NON Autenticato (Guest)** → Avvia il *Percorso Guest*, con navigazione limitata (es. solo *Menù* e *Carrello*).  
+- **Se Autenticato (Cliente)** → Avvia il *Percorso Cliente*, con navigazione completa (es. *Home*, *Menù*, *Ordini*, *Profilo*).
+
+---
+
+## 🚶‍♂️ Percorso Guest (Non Autenticato)
+
+### 🎯 Obiettivo
+Effettuare un ordine rapido **senza registrazione**.
+
+---
+
+### 1.1 🍽️ Esplorazione Menù (Guest)
+
+**Utente:** Guest  
+**Schermata:** `Menù`  
+**Flusso:**
+1. L’utente visualizza le categorie e i prodotti.
+2. Tocca un prodotto per visualizzarne i dettagli.
+3. Aggiunge il prodotto al carrello.
+
+---
+
+### 1.2 🛒 Finalizzazione Ordine (Guest)
+
+**Utente:** Guest  
+**Schermata:** `Carrello / Checkout`  
+**Flusso:**
+1. L’utente accede al carrello e visualizza il riepilogo.
+2. Inserisce manualmente i dati richiesti (es. nome, telefono, indirizzo).
+3. Conferma l’ordine.
+
+**Post-condizione:**
+- L’ordine viene inviato.
+- Nessun punto fedeltà viene accumulato.
+- L’ordine non viene salvato nello storico.
+
+---
+
+## ⭐️ Percorso Cliente (Autenticato)
+
+### 🎯 Obiettivo
+Gestire il proprio account, **accumulare punti fedeltà** e **riscattare premi**.
+
+---
+
+### 2.1 🏠 Autenticazione e Home
+
+**Utente:** Cliente  
+**Schermata:** `Login / Home`  
+**Flusso:**
+1. Il cliente inserisce le proprie credenziali.
+2. Dopo l’accesso, viene reindirizzato alla Home.
+
+**Contenuto Home:**
+- Informazioni personalizzate.
+- Promozioni attive.
+- Saldo punti attuale.
+
+---
+
+### 2.2 🍽️ Esplorazione Menù (Cliente)
+
+**Utente:** Cliente autenticato  
+**Schermata:** `Menù`  
+**Flusso:**
+- Identico al caso d’uso *1.1*, ma con utente loggato.
+
+---
+
+### 2.3 💸 Finalizzazione Ordine e Accumulo Punti
+
+**Utente:** Cliente  
+**Schermata:** `Carrello / Checkout`  
+**Flusso:**
+1. Il cliente accede al carrello (dati precompilati).
+2. Conferma l’ordine.
+
+**Post-condizione:**
+- L’ordine viene salvato nello *Storico Ordini*.
+- Il sistema assegna **1 punto per ogni Euro speso**.
+
+---
+
+### 2.4 🧾 Consultazione Storico Ordini
+
+**Utente:** Cliente  
+**Schermata:** `Ordini`  
+**Flusso:**
+1. Il cliente seleziona *Ordini* dalla Bottom Tab Bar.
+2. Visualizza l’elenco cronologico degli ordini effettuati.
+3. Può toccare un ordine per visualizzare i dettagli (prodotti, prezzo, punti accumulati).
+
+---
+
+### 2.5 👤 Gestione Profilo, Punti e Logout
+
+**Utente:** Cliente  
+**Schermata:** `Profilo Utente`  
+
+#### 🔍 Flusso (Visualizzazione)
+- Il cliente apre la sezione *Profilo* e visualizza i propri dati e il saldo punti totale.
+
+#### 🎁 Flusso (Riscossione Buoni)
+1. Il cliente preme *Riscatta Buoni*.
+2. L'app apre una schermata modale con i premi disponibili.
+3. Il cliente seleziona un premio → i punti vengono detratti.
+
+#### 🚪 Flusso (Logout)
+1. Il cliente seleziona *Esci*.
+2. L'app cancella la sessione, resetta lo stack di navigazione e torna allo stato *Guest*.
+
+---
+
+## 🧩 Riassunto Percorsi
+
+| Stato Utente | Accesso Funzionalità | Punti Fedeltà | Storico Ordini | Riscatto Premi |
+|---------------|----------------------|----------------|----------------|----------------|
+| **Guest** | Menù, Carrello, Checkout | ❌ | ❌ | ❌ |
+| **Cliente** | Home, Menù, Ordini, Profilo | ✅ | ✅ | ✅ |
+
+---
+
 <img width="479" height="648" alt="uml2" src="https://github.com/user-attachments/assets/db9795c0-9213-4c0b-862d-31239301a848" />
 
 # ⚙️ Good & Bad Practice
