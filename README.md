@@ -93,7 +93,8 @@ Effettuare un ordine rapido **senza registrazione**.
 1. L’utente visualizza le categorie e i prodotti.
 2. Tocca un prodotto per visualizzarne i dettagli.
 3. Aggiunge il prodotto al carrello.
-<img width="355" height="281" alt="CU1" src="https://github.com/user-attachments/assets/58373302-a13b-4eb2-a268-8e0d864ea24e" width="50%" />
+<img width="745" height="567" alt="CU1 1" src="https://github.com/user-attachments/assets/7eef458d-8631-4bb8-9459-f5b7b2ad9a7b" width="50%"/>
+
 
 ---
 
@@ -110,6 +111,7 @@ Effettuare un ordine rapido **senza registrazione**.
 - L’ordine viene inviato.
 - Nessun punto fedeltà viene accumulato.
 - L’ordine non viene salvato nello storico.
+<img width="841" height="509" alt="CU1 2" src="https://github.com/user-attachments/assets/b5790788-ec6d-455f-b185-e3209defa989" width="50%"/>
 
 ---
 
@@ -132,6 +134,7 @@ Gestire il proprio account, **accumulare punti fedeltà** e **riscattare premi**
 - Informazioni personalizzate.
 - Promozioni attive.
 - Saldo punti attuale.
+<img width="952" height="480" alt="CU2 1" src="https://github.com/user-attachments/assets/e3d49c59-e03d-406a-9efd-028557de74d3" width="50%"/>
 
 ---
 
@@ -141,6 +144,7 @@ Gestire il proprio account, **accumulare punti fedeltà** e **riscattare premi**
 **Schermata:** `Menù`  
 **Flusso:**
 - Identico al caso d’uso per il **guest**, ma con utente loggato.
+<img width="828" height="480" alt="CU2 2" src="https://github.com/user-attachments/assets/7110fbd8-0a2e-4c61-ad77-08237c9ccabf" width="50%"/>
 
 ---
 
@@ -155,6 +159,7 @@ Gestire il proprio account, **accumulare punti fedeltà** e **riscattare premi**
 **Post-condizione:**
 - L’ordine viene salvato nello *Storico Ordini*.
 - Il sistema assegna **1 punto per ogni Euro speso**.
+<img width="1090" height="655" alt="CU2 3" src="https://github.com/user-attachments/assets/c183356c-6c56-4195-9bb1-e0ca1cdc4be0" width="50%"/>
 
 ---
 
@@ -166,6 +171,7 @@ Gestire il proprio account, **accumulare punti fedeltà** e **riscattare premi**
 1. Il cliente seleziona *Ordini* dalla Bottom Tab Bar.
 2. Visualizza l’elenco cronologico degli ordini effettuati.
 3. Può toccare un ordine per visualizzare i dettagli (prodotti, prezzo, punti accumulati).
+<img width="767" height="509" alt="CU2 4" src="https://github.com/user-attachments/assets/e59d4379-e817-45ce-9ca1-9ab65bce3076" width="50%"/>
 
 ---
 
@@ -185,7 +191,7 @@ Gestire il proprio account, **accumulare punti fedeltà** e **riscattare premi**
 #### 🚪 Flusso (Logout)
 1. Il cliente seleziona *Esci*.
 2. L'app cancella la sessione, resetta lo stack di navigazione e torna allo stato *Guest*
-3. 
+<img width="834" height="859" alt="CU2 5" src="https://github.com/user-attachments/assets/b8a9beec-6d3e-4326-9f18-b8556b99a31b" width="50%" />
 ---
 
 # ⚙️ Good & Bad Practice
