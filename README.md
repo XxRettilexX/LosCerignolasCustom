@@ -1,9 +1,15 @@
 # 🌮 Los Cerignola
 
-**Los Cerignola** è un’app sviluppata con **React Native (Expo)** che permette di esplorare in modo intuitivo i menù disponibili e visualizzare i prodotti offerti da una pizzeria.
-L’app consente agli utenti di **consultare il menù**, effettuare ordini in pochi passaggi e, per i clienti registrati, di **accumulare punti fedeltà** da convertire facilmente in premi e sconti.
+## 🌮 Introduzione
 
-Grazie a un’interfaccia curata e a un flusso d’uso semplificato, Los Cerignola aiuta le attività di ristorazione a ridurre i tempi di attesa, incrementare la fidelizzazione e digitalizzare il servizio, offrendo un canale diretto e coinvolgente tra locale e cliente.
+**Los Cerignola** è un’app nata per rendere l’esperienza in pizzeria più semplice e piacevole.  
+L’idea è quella di permettere a chiunque, in pochi tocchi, di dare un’occhiata al menù, scegliere cosa ordinare e, se registrato, accumulare punti da usare per ottenere sconti o premi.
+
+L’app è pensata per funzionare in modo semplice e immediato su qualsiasi telefono.  
+Ha un aspetto curato, con colori vivaci e uno stile che mette subito di buon umore.  
+Ogni dettaglio è stato scelto per trasmettere la stessa accoglienza e familiarità che si prova entrando in una buona pizzeria: un posto dove ti puoi sentire a casa.
+
+
 
 ---
 
