@@ -206,32 +206,59 @@ Gestire il proprio account, **accumulare punti fedeltà** e **riscattare premi**
 #### 🚪 Flusso (Logout)
 1. Il cliente seleziona *Esci*.
 2. L'app cancella la sessione, resetta lo stack di navigazione e torna allo stato *Guest*
-<img width="834" height="859" alt="CU2 5" src="https://github.com/user-attachments/assets/b8a9beec-6d3e-4326-9f18-b8556b99a31b" width="50%" />
+<img alt="CU2 5" src="https://github.com/user-attachments/assets/b8a9beec-6d3e-4326-9f18-b8556b99a31b" width="50%" />
 ---
 
-# ⚙️ Good & Bad Practice
+## ⚙️ Good & Bad Practices – Analisi UX di altre applicazioni
 
-## ✅ Good Practice
-- **Autenticazione sicura e fluida**  
-  Gestione chiara di login, errori e recupero password.
-- **Navigazione coerente**  
-  Uso combinato di *Bottom Tab Bar* e *Stack Navigation*, con percorsi prevedibili e coerenti.
-- **Sessione protetta**  
-  Reset completo dello stack dopo il logout e invalidazione del token utente.
-- **Esperienza utente curata**  
-  Feedback visivi, messaggi chiari e attenzione all’accessibilità.
+L’analisi è stata condotta prendendo come riferimento applicazioni mobile popolari come **Spotify**, **Instagram** e **Duolingo**, osservando come gestiscono autenticazione, navigazione e feedback utente.
 
 ---
 
-## ❌ Bad Practice
-- **Login forzato senza contesto**  
-  Obbligare l’utente ad autenticarsi subito, senza contenuti introduttivi.
-- **Navigazione confusa**  
-  Percorsi duplicati o mancanza del pulsante “indietro”.
-- **Gestione sessione inefficace**  
-  Possibilità di tornare a schermate protette dopo il logout.
-- **Assenza di feedback**  
-  Nessuna indicazione durante caricamenti o errori
+### ✅ Good Practices
+
+#### 🔐 Autenticazione sicura e fluida
+App come **Duolingo** e **Spotify** offrono flussi di login chiari e veloci, con opzioni di **autenticazione tramite Google o Apple**, messaggi d’errore specifici e recupero password intuitivo.
+<img alt="Login" src="https://github.com/user-attachments/assets/7ea0feed-42cc-42e0-bd80-b058db81aadd" width="50%" />
+
+#### 🧭 Navigazione coerente
+**Spotify** e **Instagram** fanno un uso combinato di **Bottom Tab Bar** e **Stack Navigation**, garantendo percorsi prevedibili, coerenti e un senso di continuità tra le schermate.
+<img alt="Bar" src="https://github.com/user-attachments/assets/de301fb1-8f51-4038-a49c-3c5e553502fd" width="50%" />
+
+#### 🛡️ Sessione protetta
+Molte app implementano **il reset completo dello stack dopo il logout**, evitando che l’utente possa tornare a schermate private tramite il tasto “indietro”.
+<img alt="Logout" src="https://github.com/user-attachments/assets/e25b632e-7f93-4921-a8d4-9d3b097bb9ba" width="50%" />
+
+#### 💬 Esperienza utente curata
+App come **Duolingo** si distinguono per i **feedback visivi e sonori**, messaggi chiari e attenzione all’accessibilità (uso corretto dei colori, testo leggibile e contrasto elevato).
+
+---
+
+### ❌ Bad Practices
+
+#### 🚫 Login forzato senza contesto
+Alcune app minori obbligano l’utente ad autenticarsi immediatamente, **senza mostrare alcun contenuto introduttivo** o vantaggio del servizio, aumentando l’abbandono iniziale.
+
+#### 🔄 Navigazione confusa
+La presenza di **percorsi duplicati**, pulsanti “indietro” incoerenti o la mancanza di una gerarchia chiara nelle schermate (comune in molte app aziendali non ottimizzate) causa disorientamento.
+
+#### 🔓 Gestione sessione inefficace
+In certi casi, dopo il logout, è ancora possibile **tornare a schermate protette** tramite la cronologia del dispositivo — un chiaro segno di cattiva gestione dello stato utente.
+
+#### 🕳️ Assenza di feedback
+Molte app sottovalutano l’importanza dei **loader**, dei **messaggi di stato** e delle **transizioni fluide**, lasciando l’utente incerto sull’esito di un’azione (es. “Sto caricando...”, “Errore di rete”, ecc.).
+
+---
+
+### 🧠 Conclusione
+
+Le **best practices UX** osservate dimostrano che un’esperienza coerente e sicura nasce da:
+- una **navigazione prevedibile**,  
+- una **gestione dello stato utente affidabile**,  
+- e un **feedback chiaro** in ogni fase del flusso.
+
+Seguendo questi principi, l’app può migliorare **fiducia, fluidità e soddisfazione complessiva** dell’utente.
+
 ---
 # ⚙️ WireFrame
 <img width="1920" height="1080" alt="Dettagli" src="https://github.com/user-attachments/assets/65d93c71-1eb0-46b8-8f45-0805f749c00a" />
