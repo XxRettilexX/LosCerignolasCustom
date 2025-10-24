@@ -93,6 +93,7 @@ Effettuare un ordine rapido **senza registrazione**.
 1. L’utente visualizza le categorie e i prodotti.
 2. Tocca un prodotto per visualizzarne i dettagli.
 3. Aggiunge il prodotto al carrello.
+<img width="355" height="281" alt="CU1" src="https://github.com/user-attachments/assets/58373302-a13b-4eb2-a268-8e0d864ea24e" width="50%" />
 
 ---
 
