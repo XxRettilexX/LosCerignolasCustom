@@ -5,11 +5,11 @@
 **Los Cerignola** è un’app nata per rendere l’esperienza in pizzeria più semplice e piacevole.  
 L’idea è quella di permettere a chiunque, in pochi tocchi, di dare un’occhiata al menù, scegliere cosa ordinare e, se registrato, accumulare punti da usare per ottenere sconti o premi.
 
+L’utente può accedere all’app in modo immediato semplicemente scansionando un **QR code** presente nel locale, senza bisogno di cercare l’app nello store o digitare indirizzi complessi.  
+
 L’app è pensata per funzionare in modo semplice e immediato su qualsiasi telefono.  
 Ha un aspetto curato, con colori vivaci e uno stile che mette subito di buon umore.  
 Ogni dettaglio è stato scelto per trasmettere la stessa accoglienza e familiarità che si prova entrando in una buona pizzeria: un posto dove ti puoi sentire a casa.
-
-
 
 ---
 
@@ -26,10 +26,15 @@ Ogni dettaglio è stato scelto per trasmettere la stessa accoglienza e familiari
 
 ---
 
-## 🐔 Mascotte — “Cerigno”
+## 🐔 Cerigno – La Mascotte di Los Cerignola
 
-**Cerigno** è la mascotte ufficiale di *Los Cerignola*:  
-un simpatico **pollo pizzaiolo** con cappello da chef, sempre pronto a sfornare pizze perfette! 🍕🔥  
+**Cerigno** è il volto e l’anima di Los Cerignola: un pollo pizzaiolo simpatico e pieno di energia, sempre con il cappello da chef e pronto a sfornare pizze perfette! 🍕🔥  
+
+Cerigno rappresenta **allegria e accoglienza**.  
+È stato scelto perché vuole rendere l’app **più divertente**, accompagnando l’utente in ogni schermata e trasmettendo la stessa familiarità e calore che si prova entrando in una pizzeria.  
+
+In pratica, Cerigno non è solo un’icona: è un piccolo ambasciatore del brand, che crea **connessione emotiva** con chi usa l’app e rende l’esperienza digitale più coinvolgente.
+
 <img src="https://github.com/user-attachments/assets/68623421-12b7-4fd2-b1ea-2919e0ac8bb9" alt="Cerino" width="50%"/>
 
 ---
