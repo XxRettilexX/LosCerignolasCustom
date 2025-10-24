@@ -1,4 +1,6 @@
-<img width="20%" alt="ChatGPT Image 24 ott 2025, 12_33_06" src="https://github.com/user-attachments/assets/37c1edf6-c4d6-4d6b-a3fd-1d18aaf58af8" /> **🌮 Los Cerignola**  
+<img width="20%" alt="ChatGPT Image 24 ott 2025, 12_33_06" src="https://github.com/user-attachments/assets/37c1edf6-c4d6-4d6b-a3fd-1d18aaf58af8" /> 
+
+##**🌮 Los Cerignola**  
 
 
 ## 🌮 Introduzione
