@@ -222,8 +222,8 @@ App come **Duolingo** e **Spotify** offrono flussi di login chiari e veloci, con
 <img alt="Login" src="https://github.com/user-attachments/assets/7ea0feed-42cc-42e0-bd80-b058db81aadd" width="50%" />
 
 #### 🧭 Navigazione coerente
-**Spotify** e **Instagram** fanno un uso combinato di **Bottom Tab Bar** e **Stack Navigation**, garantendo percorsi prevedibili, coerenti e un senso di continuità tra le schermate.
-<img alt="Bar" src="https://github.com/user-attachments/assets/de301fb1-8f51-4038-a49c-3c5e553502fd" width="50%" />
+**Spotify** e **Instagram** fanno un uso combinato di **Bottom Tab Bar** e **Stack Navigation**, garantendo percorsi intuitivi e con un senso di continuità tra le schermate.
+<img with="30%" alt="Bar" src="https://github.com/user-attachments/assets/de301fb1-8f51-4038-a49c-3c5e553502fd" width="50%" />
 
 #### 🛡️ Sessione protetta
 Molte app implementano **il reset completo dello stack dopo il logout**, evitando che l’utente possa tornare a schermate private tramite il tasto “indietro”.
