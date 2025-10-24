@@ -235,6 +235,7 @@ Gestire il proprio account, **accumulare punti fedeltà** e **riscattare premi**
 ---
 # ⚙️ WireFrame
 <img width="1920" height="1080" alt="Dettagli" src="https://github.com/user-attachments/assets/65d93c71-1eb0-46b8-8f45-0805f749c00a" />
+
 **Avvio (Splash Screen)**: Il flusso inizia dalla schermata splash. L'utente ha due opzioni: scansionare il QR code o premere il pulsante "Apri App".
 
 **Menù**: Premendo "Apri App", l'utente accede alla schermata principale del Menù, dove può visualizzare l'elenco dei prodotti disponibili.
