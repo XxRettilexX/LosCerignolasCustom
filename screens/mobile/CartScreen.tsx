@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Header from '../../components/Header';
+import { Colors } from '../../constants/Colors';
 import { useCart } from '../../context/CartContext';
 import { useOrders } from '../../context/OrderContext';
-import { Colors } from '../../constants/Colors';
-import Header from '../../components/Header';
 
 const CartScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { items, removeFromCart, total, clearCart } = useCart();
@@ -16,11 +16,13 @@ const CartScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     navigation.goBack();
   };
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item }: { item: any }) => (
     <View style={styles.itemContainer}>
       <View style={styles.itemInfo}>
-        <Text style={styles.itemName}>{item.name} (x{item.quantity})</Text>
-        <Text style={styles.itemPrice}>{`€${(item.price * item.quantity).toFixed(2)}`}</Text>
+        <Text style={styles.itemName}>
+          {item.name} (x{item.quantity})
+        </Text>
+        <Text style={styles.itemPrice}>€{(item.price * item.quantity).toFixed(2)}</Text>
       </View>
       <TouchableOpacity onPress={() => removeFromCart(item.id)}>
         <Text style={styles.removeButton}>Rimuovi</Text>
@@ -40,11 +42,11 @@ const CartScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           <FlatList
             data={items}
             renderItem={renderItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => String(item.id)}
             contentContainerStyle={styles.listContainer}
           />
           <View style={styles.footer}>
-            <Text style={styles.totalText}>Total: €{total.toFixed(2)}</Text>
+            <Text style={styles.totalText}>Totale: €{total.toFixed(2)}</Text>
             <TouchableOpacity style={styles.checkoutButton} onPress={handleCheckout}>
               <Text style={styles.checkoutButtonText}>Invia Ordine</Text>
             </TouchableOpacity>

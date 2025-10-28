@@ -1,7 +1,8 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { Order, OrderStatus } from '../types/order';
-import { CartItem } from './CartContext';
 import { OrderService } from '../utils/OrderService';
+import { useAuth } from './AuthContext';
+import { CartItem } from './CartContext';
 
 interface OrderContextType {
   orders: Order[];
@@ -13,27 +14,28 @@ const OrderContext = createContext<OrderContextType | undefined>(undefined);
 
 export const OrderProvider = ({ children }: { children: ReactNode }) => {
   const [orders, setOrders] = useState<Order[]>([]);
+  const { token } = useAuth();
 
   useEffect(() => {
-    // Initialize orders from the service
+    if (!token) return;
+
+    // Inizializza gli ordini
     setOrders(OrderService.getOrders());
 
-    // Subscribe to order changes
+    // Si sottoscrive agli aggiornamenti
     const unsubscribe = OrderService.subscribe(updatedOrders => {
       setOrders(updatedOrders);
-    });
+    }, token ?? undefined);
 
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+    return () => unsubscribe();
+  }, [token]);
 
   const addOrder = (items: CartItem[], total: number) => {
-    OrderService.addOrder(items, total);
+    OrderService.addOrder(items, total, token ?? undefined);
   };
 
   const updateOrderStatus = (orderId: string, status: OrderStatus) => {
-    OrderService.updateOrderStatus(orderId, status);
+    OrderService.updateOrderStatus(orderId, status, token ?? undefined);
   };
 
   return (
@@ -45,8 +47,6 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
 
 export const useOrders = () => {
   const context = useContext(OrderContext);
-  if (context === undefined) {
-    throw new Error('useOrders must be used within an OrderProvider');
-  }
+  if (!context) throw new Error('useOrders deve essere usato dentro un OrderProvider');
   return context;
 };

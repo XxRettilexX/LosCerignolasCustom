@@ -1,10 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
+import GradientButton from '../../components/GradientButton';
 import Header from '../../components/Header';
 import { Colors } from '../../constants/Colors';
 import { useAuth } from '../../context/AuthContext';
-
 
 const ProfileScreen: React.FC = () => {
   const { user, logout } = useAuth();
@@ -15,29 +15,33 @@ const ProfileScreen: React.FC = () => {
       <Header title="Profilo" />
       <View style={styles.content}>
         {user ? (
-          // Authenticated View
-          <>
-            <Text style={styles.label}>Nome:</Text>
-            <Text style={styles.value}>{user.name}</Text>
-            <Text style={styles.label}>Email:</Text>
-            <Text style={styles.value}>{user.email}</Text>
-            <Text style={styles.label}>Punti Fedeltà:</Text>
-            <Text style={styles.value}>{user.loyaltyPoints}</Text>
-            <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={logout}>
-              <Text style={styles.buttonText}>Logout</Text>
-            </TouchableOpacity>
-          </>
+          <View style={styles.profileCard}>
+            <Image
+
+              style={styles.avatar}
+            />
+            <Text style={styles.name}>{user.name}</Text>
+            <Text style={styles.email}>{user.email}</Text>
+
+            <View style={styles.pointsContainer}>
+              <Text style={styles.pointsLabel}>Punti Fedeltà</Text>
+              <Text style={styles.pointsValue}>{user.loyalty_points ?? 0}</Text>
+            </View>
+
+            <GradientButton title="Logout" onPress={logout} variant="danger" />
+          </View>
         ) : (
-          // Guest View
-          <>
-            <Text style={styles.guestTitle}>Accedi per guadagnare punti!</Text>
+          <View style={styles.guestContainer}>
+            <Text style={styles.guestTitle}>Accedi per guadagnare punti! 🎉</Text>
             <Text style={styles.guestSubtitle}>
-              Crea un account o accedi per salvare i tuoi ordini e accumulare punti fedeltà da usare come sconti.
+              Crea un account o accedi per salvare i tuoi ordini e accumulare punti fedeltà.
             </Text>
-            <TouchableOpacity style={[styles.button, styles.loginButton]} onPress={() => navigation.navigate('Login')}>
-              <Text style={styles.buttonText}>Accedi o Registrati</Text>
-            </TouchableOpacity>
-          </>
+            <GradientButton
+              title="Accedi o Registrati"
+              onPress={() => navigation.navigate('Login')}
+              variant="secondary"
+            />
+          </View>
         )}
       </View>
     </View>
@@ -45,55 +49,42 @@ const ProfileScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-  },
-  label: {
-    fontSize: 16,
-    color: Colors.secondary,
-    marginTop: 20,
-  },
-  value: {
-    fontSize: 18,
-    color: Colors.text,
-    marginBottom: 10,
-  },
-  button: {
-    padding: 15,
-    borderRadius: 8,
+  container: { flex: 1, backgroundColor: Colors.background },
+  content: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20 },
+  profileCard: {
+    backgroundColor: '#FFF',
+    borderRadius: 20,
+    padding: 25,
     alignItems: 'center',
-    marginTop: 40,
+    width: '100%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  loginButton: {
-    backgroundColor: Colors.primary,
-  },
-  logoutButton: {
-    backgroundColor: '#FF6347', // Tomato color
-  },
-  buttonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: Colors.text,
-  },
-  guestTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: Colors.text,
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  guestSubtitle: {
-    fontSize: 16,
-    color: Colors.secondary,
-    textAlign: 'center',
+  avatar: { width: 100, height: 100, borderRadius: 50, marginBottom: 15 },
+  name: { fontSize: 22, fontWeight: '800', color: Colors.text },
+  email: { fontSize: 16, color: Colors.secondary, marginBottom: 20 },
+  pointsContainer: {
+    backgroundColor: Colors.secondary,
+    borderRadius: 15,
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    alignItems: 'center',
     marginBottom: 30,
   },
+  pointsLabel: { color: '#FFF', fontSize: 16 },
+  pointsValue: { color: Colors.primary, fontSize: 36, fontWeight: '800' },
+  guestContainer: { alignItems: 'center', paddingHorizontal: 20 },
+  guestTitle: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: Colors.text,
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  guestSubtitle: { fontSize: 16, color: Colors.secondary, textAlign: 'center', marginBottom: 30 },
 });
 
 export default ProfileScreen;

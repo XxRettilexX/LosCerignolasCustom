@@ -1,7 +1,9 @@
+// types/product.ts
 export interface Product {
-  id: string;
+  id: number;
   name: string;
-  description: string;
+  description?: string;
   price: number;
-  image: string;
+  image?: string;
+  quantity?: number; // 👈 aggiungi questa
 }

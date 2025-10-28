@@ -14,7 +14,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
       <Image source={{ uri: product.image }} style={styles.image} />
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{product.name}</Text>
-        <Text style={styles.price}>{`€${product.price.toFixed(2)}`}</Text>
+        <Text style={styles.price}>{typeof product.price === 'number' && product.price > 0 ? `€${product.price.toFixed(2)}` : ''}</Text>
       </View>
     </TouchableOpacity>
   );

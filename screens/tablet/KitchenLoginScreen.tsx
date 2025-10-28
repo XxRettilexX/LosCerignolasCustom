@@ -11,24 +11,30 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
-import { RootStackParamList } from '../../types/navigation';
+import { TabletStackParamList } from '../../types/navigation';
 
-// 🎨 Palette coerente
+/* -------------------------------------------------------------------------- */
+/* 🎨 Palette specifica per lo staff cucina                                   */
+/* -------------------------------------------------------------------------- */
 const Colors = {
-  primary: '#FFD60A',        // Giallo
-  secondary: '#004AAD',      // Blu
-  backgroundLight: '#FFF7E0', // Crema
-  text: '#001D3D',           // Blu Notte
+  primary: '#2E7D32', // Verde scuro (cucina)
+  secondary: '#81C784', // Verde chiaro
+  background: '#F1F8E9', // Verde molto chiaro
+  text: '#1B5E20', // Verde profondo
+  accent: '#C8E6C9', // Verde tenue
 };
 
-// 🧭 Tipizzazione navigazione
-type RootNavigationProp = StackNavigationProp<RootStackParamList>;
+/* -------------------------------------------------------------------------- */
+/* 🧭 Tipizzazione navigazione                                                */
+/* -------------------------------------------------------------------------- */
+type KitchenNavigationProp = StackNavigationProp<TabletStackParamList>;
 
-const LoginScreen: React.FC = () => {
-  const navigation = useNavigation<RootNavigationProp>();
+const KitchenLoginScreen: React.FC = () => {
+  const navigation = useNavigation<KitchenNavigationProp>();
   const { login } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -38,7 +44,7 @@ const LoginScreen: React.FC = () => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(40)).current;
 
-  // ✨ Animazioni in ingresso
+  /* ✨ Animazioni in ingresso */
   useEffect(() => {
     Animated.parallel([
       Animated.spring(translateY, {
@@ -55,35 +61,34 @@ const LoginScreen: React.FC = () => {
     ]).start();
   }, []);
 
-  // 🧠 Logica di login
+  /* 🧠 Logica di login per la cucina */
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Errore', 'Per favore, inserisci email e password.');
+      Alert.alert('Errore', 'Inserisci email e password per accedere.');
       return;
     }
 
     setLoading(true);
     try {
-      console.log("📤 Tentativo login:", { email, password });
+      console.log("👨‍🍳 Tentativo di login staff cucina:", { email, password });
       await login(email, password);
 
-      console.log("✅ Login completato, passo alla Main...");
+      console.log("✅ Login staff riuscito, vado alla schermata Kitchen...");
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Main' }], // ✅ corretto in base al tuo RootStackParamList
+        routes: [{ name: 'Main' }], // oppure 'Kitchen' se hai uno stack dedicato
       });
     } catch (error: any) {
-      console.error("❌ Errore di login:", error.message);
+      console.error("❌ Errore di login staff:", error.message);
       Alert.alert('Errore di Login', error.message || 'Credenziali non valide.');
     } finally {
       setLoading(false);
     }
   };
 
-
   return (
     <LinearGradient
-      colors={[Colors.backgroundLight, '#FFF9EB', '#FFF7E0']}
+      colors={[Colors.background, Colors.accent, '#E8F5E9']}
       style={styles.container}
     >
       <KeyboardAvoidingView
@@ -96,12 +101,13 @@ const LoginScreen: React.FC = () => {
             { opacity: fadeAnim, transform: [{ translateY }] },
           ]}
         >
-          <Text style={styles.title}>Benvenuto 👋</Text>
-          <Text style={styles.subtitle}>
-            Accedi per ordinare e guadagnare punti fedeltà 🍕
-          </Text>
+          <View style={styles.headerBox}>
+            <Text style={styles.title}>Area Staff 👨‍🍳</Text>
+            <Text style={styles.subtitle}>
+              Accedi per gestire gli ordini della cucina
+            </Text>
+          </View>
 
-          {/* ✉️ Email */}
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -112,7 +118,6 @@ const LoginScreen: React.FC = () => {
             placeholderTextColor="#7A7A7A"
           />
 
-          {/* 🔒 Password */}
           <TextInput
             style={styles.input}
             placeholder="Password"
@@ -122,7 +127,6 @@ const LoginScreen: React.FC = () => {
             placeholderTextColor="#7A7A7A"
           />
 
-          {/* 🔘 Pulsante Login */}
           <TouchableOpacity
             style={[styles.button, loading && { opacity: 0.7 }]}
             onPress={handleLogin}
@@ -130,13 +134,13 @@ const LoginScreen: React.FC = () => {
             activeOpacity={0.8}
           >
             <LinearGradient
-              colors={[Colors.primary, '#FFD93D']}
+              colors={[Colors.primary, Colors.secondary]}
               style={styles.gradientBtn}
             >
               {loading ? (
-                <ActivityIndicator color={Colors.text} />
+                <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.buttonText}>Login</Text>
+                <Text style={styles.buttonText}>Accedi</Text>
               )}
             </LinearGradient>
           </TouchableOpacity>
@@ -146,7 +150,9 @@ const LoginScreen: React.FC = () => {
   );
 };
 
-// 💅 Stili
+/* -------------------------------------------------------------------------- */
+/* 💅 Stili                                                                   */
+/* -------------------------------------------------------------------------- */
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: {
@@ -155,30 +161,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 25,
   },
+  headerBox: {
+    alignItems: 'center',
+    marginBottom: 30,
+  },
   title: {
-    fontSize: 30,
+    fontSize: 28,
     fontWeight: '800',
     color: Colors.text,
-    marginBottom: 10,
+    marginBottom: 5,
   },
   subtitle: {
     fontSize: 16,
     color: Colors.text,
     opacity: 0.8,
-    marginBottom: 30,
     textAlign: 'center',
   },
   input: {
     width: '100%',
     backgroundColor: '#FFF',
-    borderRadius: 15,
+    borderRadius: 12,
     paddingVertical: 15,
     paddingHorizontal: 20,
     fontSize: 16,
     color: Colors.text,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: '#EEE',
+    borderColor: '#CCC',
   },
   button: {
     width: '100%',
@@ -191,10 +200,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    color: Colors.text,
+    color: '#FFF',
     fontSize: 18,
     fontWeight: '700',
   },
 });
 
-export default LoginScreen;
+export default KitchenLoginScreen;

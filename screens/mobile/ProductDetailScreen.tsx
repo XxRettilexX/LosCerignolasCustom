@@ -30,7 +30,7 @@ const ProductDetailScreen: React.FC<Props> = ({ route, navigation }) => {
       <Image source={{ uri: product.image }} style={styles.image} />
       <View style={styles.detailsContainer}>
         <Text style={styles.description}>{product.description}</Text>
-        <Text style={styles.price}>{`€${product.price.toFixed(2)}`}</Text>
+        <Text style={styles.price}>{typeof product.price === 'number' && product.price > 0 ? `€${product.price.toFixed(2)}` : ''}</Text>
       </View>
       <TouchableOpacity style={styles.button} onPress={handleAddToCart}>
         <Text style={styles.buttonText}>Aggiungi al Carrello</Text>

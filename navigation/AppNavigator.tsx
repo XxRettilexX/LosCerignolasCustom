@@ -1,30 +1,30 @@
-import React from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
 
+import { Colors } from '../constants/Colors';
 import { useAuth } from '../context/AuthContext';
-import { getDeviceType } from '../utils/deviceDetector';
 import {
-  RootStackParamList,
   AuthStackParamList,
   MainTabParamList,
+  RootStackParamList,
   TabletStackParamList,
 } from '../types/navigation';
-import { Colors } from '../constants/Colors';
+import { getDeviceType } from '../utils/deviceDetector';
 
 // Mobile Screens
-import MobileLoginScreen from '../screens/mobile/LoginScreen';
+import MobileCartScreen from '../screens/mobile/CartScreen';
 import MobileHomeScreen from '../screens/mobile/HomeScreen';
+import MobileLoginScreen from '../screens/mobile/LoginScreen';
 import MobileMenuScreen from '../screens/mobile/MenuScreen';
 import MobileOrdersScreen from '../screens/mobile/OrdersScreen';
-import MobileProfileScreen from '../screens/mobile/ProfileScreen';
 import MobileProductDetailScreen from '../screens/mobile/ProductDetailScreen';
-import MobileCartScreen from '../screens/mobile/CartScreen';
+import MobileProfileScreen from '../screens/mobile/ProfileScreen';
 
 // Tablet Screens
-import TabletLoginScreen from '../screens/tablet/LoginScreen';
+import TabletLoginScreen from '../screens/tablet/KitchenLoginScreen';
 import TabletKitchenScreen from '../screens/tablet/KitchenScreen';
 import TabletOrderDetailScreen from '../screens/tablet/OrderDetailScreen';
 
@@ -69,7 +69,7 @@ const MobileAppStack = () => (
   <MobileStack.Navigator screenOptions={{ presentation: 'modal', headerShown: false }}>
     <MobileStack.Screen name="Main" component={MobileMainNavigator} options={{ headerShown: false }} />
     <MobileStack.Screen name="ProductDetail" component={MobileProductDetailScreen} options={{ headerShown: false }} />
-    <MobileStack.Screen name="Cart" component={MobileCartScreen} options={{ headerShown: false }}/>
+    <MobileStack.Screen name="Cart" component={MobileCartScreen} options={{ headerShown: false }} />
     <MobileStack.Screen name="Login" component={MobileLoginScreen} />
   </MobileStack.Navigator>
 );
@@ -78,10 +78,10 @@ const MobileAppStack = () => (
 const TabletStack = createStackNavigator<TabletStackParamList>();
 
 const TabletMainNavigator = () => (
-    <TabletStack.Navigator screenOptions={{ headerShown: false }}>
-        <TabletStack.Screen name="Main" component={TabletKitchenScreen} />
-        <TabletStack.Screen name="OrderDetail" component={TabletOrderDetailScreen} />
-    </TabletStack.Navigator>
+  <TabletStack.Navigator screenOptions={{ headerShown: false }}>
+    <TabletStack.Screen name="Main" component={TabletKitchenScreen} />
+    <TabletStack.Screen name="OrderDetail" component={TabletOrderDetailScreen} />
+  </TabletStack.Navigator>
 )
 
 // --- Main App Navigator ---

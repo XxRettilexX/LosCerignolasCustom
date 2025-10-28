@@ -1,6 +1,7 @@
 export interface User {
-  id: string;
+  id: number;
   name: string;
   email: string;
-  loyaltyPoints: number;
+  role: 'guest' | 'utente_registrato' | 'chef' | 'cassa';
+  loyalty_points: number;
 }
