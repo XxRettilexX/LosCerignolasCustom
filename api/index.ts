@@ -3,7 +3,7 @@ import { Order } from '../types/order';
 import { Product } from '../types/product';
 import { User } from '../types/user';
 
-const API_BASE_URL = 'http://192.168.7.230/api/'; // ✅
+const API_BASE_URL = 'http://192.168.1.26/api/'; // ✅
 
 export const api = {
   fetchProducts: async (): Promise<Product[]> => {
@@ -98,6 +98,50 @@ export const api = {
 
     return await response.json();
   },
+  fetchLoyaltyPoints: async (token: string) => {
+    const response = await fetch(`${API_BASE_URL}loyalty.php`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+    return await response.json();
+  },
+
+  updateLoyaltyPoints: async (action: 'add' | 'redeem', points: number, token: string) => {
+    const response = await fetch(`${API_BASE_URL}loyalty.php`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ action, points }),
+    });
+    if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+    return await response.json();
+  },
+
+  async payOrder(orderId: number, token?: string) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/orders/delete.php`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ order_id: orderId }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json(); // backend restituisce { success: true }
+    } catch (error) {
+      console.error('Errore payOrder:', error);
+      throw error;
+    }
+  },
+
+
 
 
 };

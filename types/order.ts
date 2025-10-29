@@ -1,5 +1,5 @@
 
-export type OrderStatus = 'Nuovo' | 'In Preparazione' | 'Pronto' | 'Completato';
+export type OrderStatus = 'Nuovo' | 'In Preparazione' | 'Pronto' | 'Completato' | 'Pagato';
 
 export interface Order {
   order_id: number;

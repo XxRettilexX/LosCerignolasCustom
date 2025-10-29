@@ -1,49 +1,33 @@
+// types/navigation.ts
 import { Product } from './product';
 
-/* -------------------------------------------------------------------------- */
-/* 🧭 STACK DI AUTENTICAZIONE (usato per tablet o login separato)             */
-/* -------------------------------------------------------------------------- */
-export type AuthStackParamList = {
-  Login: undefined;
-};
-
-/* -------------------------------------------------------------------------- */
-/* 📱 TAB PRINCIPALE MOBILE (bottom tab navigator)                            */
-/* -------------------------------------------------------------------------- */
+/* Tab principale mobile */
 export type MainTabParamList = {
   Home: undefined;
   Menu: undefined;
-  Cart: undefined;
+  Cart: undefined;      // ✅ aggiunto
   Orders: undefined;
   Profile: undefined;
 };
 
-/* -------------------------------------------------------------------------- */
-/* 📦 STACK PRINCIPALE MOBILE (include le tab e altre schermate extra)        */
-/* -------------------------------------------------------------------------- */
+/* Stack principale mobile */
 export type RootStackParamList = {
-  Splash: undefined;                   // Schermata iniziale
-  Auth: undefined;                     // Stack auth (eventuale)
-  Main: undefined;                     // Contiene il tab navigator
-  ProductDetail: { product: Product }; // Riceve un oggetto "Product"
+  Main: undefined;
+  ProductDetail: { product: Product };
   Cart: undefined;
+  Checkout: undefined;   // ✅ aggiunto
   Login: undefined;
-  OrderDetail: { orderId: number };           // 👈 Login mobile (per navigate da Home)
 };
 
-/* -------------------------------------------------------------------------- */
-/* 🍳 TAB KITCHEN (solo per tablet)                                           */
-/* -------------------------------------------------------------------------- */
-export type KitchenTabParamList = {
-  Kitchen: undefined;
+/* Auth stack (tablet o separato) */
+export type AuthStackParamList = {
+  Login: undefined;
 };
 
-/* -------------------------------------------------------------------------- */
-/* 💻 STACK PRINCIPALE TABLET (con autenticazione e ordini cucina)            */
-/* -------------------------------------------------------------------------- */
+/* Tablet */
 export type TabletStackParamList = {
-  Splash: undefined;
-  Auth: undefined;
+  Splash?: undefined;
+  Auth?: undefined;
   Main: undefined;
   OrderDetail: { orderId: string };
 };

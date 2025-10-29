@@ -12,7 +12,6 @@ import {
   View,
 } from 'react-native';
 import { api } from '../../api';
-import Header from '../../components/Header';
 import { useCart } from '../../context/CartContext';
 import { RootStackParamList } from '../../types/navigation';
 import { Product } from '../../types/product';
@@ -111,7 +110,7 @@ const MenuScreen: React.FC<Props> = ({ navigation }) => {
   /* 🔹 Schermata principale */
   return (
     <View style={styles.container}>
-      <Header title="Menù" showCart />
+
 
       <FlatList
         data={products}

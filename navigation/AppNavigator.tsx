@@ -1,3 +1,4 @@
+// navigation/AppNavigator.tsx
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
@@ -14,25 +15,23 @@ import {
 } from '../types/navigation';
 import { getDeviceType } from '../utils/deviceDetector';
 
-// Mobile Screens
+// Mobile
 import MobileCartScreen from '../screens/mobile/CartScreen';
+import CheckoutScreen from '../screens/mobile/CheckoutScreen'; // ✅ importa
 import MobileHomeScreen from '../screens/mobile/HomeScreen';
-import MobileLoginScreen from '../screens/mobile/LoginScreen';
 import MobileMenuScreen from '../screens/mobile/MenuScreen';
 import MobileOrdersScreen from '../screens/mobile/OrdersScreen';
 import MobileProductDetailScreen from '../screens/mobile/ProductDetailScreen';
 import MobileProfileScreen from '../screens/mobile/ProfileScreen';
 
-// Tablet Screens
+// Tablet
 import TabletLoginScreen from '../screens/tablet/KitchenLoginScreen';
 import TabletKitchenScreen from '../screens/tablet/KitchenScreen';
 import TabletOrderDetailScreen from '../screens/tablet/OrderDetailScreen';
 
 const deviceType = getDeviceType();
 
-/* -------------------------------------------------------------------------- */
-/* 🎯 AUTH NAVIGATOR (TABLET)                                                 */
-/* -------------------------------------------------------------------------- */
+// --- Tablet Auth Navigator ---
 const AuthStack = createStackNavigator<AuthStackParamList>();
 const TabletAuthNavigator = () => (
   <AuthStack.Navigator screenOptions={{ headerShown: false }}>
@@ -40,97 +39,50 @@ const TabletAuthNavigator = () => (
   </AuthStack.Navigator>
 );
 
-/* -------------------------------------------------------------------------- */
-/* 📱 MOBILE NAVIGATOR (Bottom Tabs + Stack)                                  */
-/* -------------------------------------------------------------------------- */
-const MobileStack = createStackNavigator<RootStackParamList>();
+// --- Mobile Navigator ---
 const MobileTab = createBottomTabNavigator<MainTabParamList>();
+const MobileStack = createStackNavigator<RootStackParamList>();
 
 const MobileMainNavigator = () => (
   <MobileTab.Navigator
     screenOptions={({ route }) => ({
       headerShown: false,
-      tabBarStyle: {
-        backgroundColor: Colors.backgroundLight,
-        borderTopColor: '#E0E0E0',
-        height: 60,
-        paddingBottom: 5,
-      },
-      tabBarLabelStyle: {
-        fontSize: 12,
-        fontWeight: '700',
-      },
       tabBarIcon: ({ focused, color, size }) => {
         let iconName;
-
-        switch (route.name) {
-          case 'Home':
-            iconName = focused ? 'home' : 'home-outline';
-            break;
-          case 'Menu':
-            iconName = focused ? 'pizza' : 'pizza-outline';
-            break;
-          case 'Cart':
-            iconName = focused ? 'cart' : 'cart-outline';
-            break;
-          case 'Orders':
-            iconName = focused ? 'receipt' : 'receipt-outline';
-            break;
-          case 'Profile':
-            iconName = focused ? 'person' : 'person-outline';
-            break;
-        }
-
+        if (route.name === 'Home') iconName = focused ? 'home' : 'home-outline';
+        else if (route.name === 'Menu') iconName = focused ? 'pizza' : 'pizza-outline';
+        else if (route.name === 'Orders') iconName = focused ? 'receipt' : 'receipt-outline';
+        else if (route.name === 'Cart') iconName = focused ? 'cart' : 'cart-outline';
+        else if (route.name === 'Profile') iconName = focused ? 'person' : 'person-outline';
         return <Ionicons name={iconName as any} size={size} color={color} />;
       },
       tabBarActiveTintColor: Colors.primary,
       tabBarInactiveTintColor: Colors.secondary,
     })}
   >
-    <MobileTab.Screen
-      name="Home"
-      component={MobileHomeScreen}
-      options={{ title: 'Home' }}
-    />
-    <MobileTab.Screen
-      name="Menu"
-      component={MobileMenuScreen}
-      options={{ title: 'Menù' }}
-    />
-    <MobileTab.Screen
-      name="Cart"
-      component={MobileCartScreen}
-      options={{ title: 'Carrello' }}
-    />
-    <MobileTab.Screen
-      name="Orders"
-      component={MobileOrdersScreen}
-      options={{ title: 'Ordini' }}
-    />
-    <MobileTab.Screen
-      name="Profile"
-      component={MobileProfileScreen}
-      options={{ title: 'Profilo' }}
-    />
+    <MobileTab.Screen name="Home" component={MobileHomeScreen} />
+    <MobileTab.Screen name="Menu" component={MobileMenuScreen} />
+    <MobileTab.Screen name="Orders" component={MobileOrdersScreen} />
+    <MobileTab.Screen name="Cart" component={MobileCartScreen} />
+    <MobileTab.Screen name="Profile" component={MobileProfileScreen} />
   </MobileTab.Navigator>
 );
 
-/* -------------------------------------------------------------------------- */
-/* 🧭 MOBILE STACK (con Product Detail e Login)                               */
-/* -------------------------------------------------------------------------- */
+
+
+
 const MobileAppStack = () => (
   <MobileStack.Navigator screenOptions={{ presentation: 'modal', headerShown: false }}>
-    <MobileStack.Screen name="Main" component={MobileMainNavigator} options={{ headerShown: false }} />
-    <MobileStack.Screen name="ProductDetail" component={MobileProductDetailScreen} options={{ headerShown: false }} />
-    <MobileStack.Screen name="Login" component={MobileLoginScreen} />
+    <MobileStack.Screen name="Main" component={MobileMainNavigator} />
+    <MobileStack.Screen name="ProductDetail" component={MobileProductDetailScreen} />
+    <MobileStack.Screen name="Checkout" component={CheckoutScreen} />
   </MobileStack.Navigator>
 );
 
-/* -------------------------------------------------------------------------- */
-/* 💻 TABLET STACK (solo se loggato)                                         */
-/* -------------------------------------------------------------------------- */
-const TabletStack = createStackNavigator<TabletStackParamList>();
 
+
+// --- Tablet Navigator (login richiesto) ---
+const TabletStack = createStackNavigator<TabletStackParamList>();
 const TabletMainNavigator = () => (
   <TabletStack.Navigator screenOptions={{ headerShown: false }}>
     <TabletStack.Screen name="Main" component={TabletKitchenScreen} />
@@ -138,18 +90,14 @@ const TabletMainNavigator = () => (
   </TabletStack.Navigator>
 );
 
-/* -------------------------------------------------------------------------- */
-/* 🌍 MAIN NAVIGATOR                                                         */
-/* -------------------------------------------------------------------------- */
 const AppNavigator = () => {
   const { user } = useAuth();
 
-  const renderMobileNavigator = () => <MobileAppStack />;
-  const renderTabletNavigator = () => (user ? <TabletMainNavigator /> : <TabletAuthNavigator />);
-
   return (
     <NavigationContainer>
-      {deviceType === 'mobile' ? renderMobileNavigator() : renderTabletNavigator()}
+      {deviceType === 'mobile'
+        ? <MobileAppStack />
+        : (user ? <TabletMainNavigator /> : <TabletAuthNavigator />)}
     </NavigationContainer>
   );
 };
