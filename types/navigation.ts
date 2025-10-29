@@ -13,6 +13,7 @@ export type AuthStackParamList = {
 export type MainTabParamList = {
   Home: undefined;
   Menu: undefined;
+  Cart: undefined;
   Orders: undefined;
   Profile: undefined;
 };
@@ -26,7 +27,8 @@ export type RootStackParamList = {
   Main: undefined;                     // Contiene il tab navigator
   ProductDetail: { product: Product }; // Riceve un oggetto "Product"
   Cart: undefined;
-  Login: undefined;                    // 👈 Login mobile (per navigate da Home)
+  Login: undefined;
+  OrderDetail: { orderId: number };           // 👈 Login mobile (per navigate da Home)
 };
 
 /* -------------------------------------------------------------------------- */

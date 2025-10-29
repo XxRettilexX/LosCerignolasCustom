@@ -1,11 +1,18 @@
-import { CartItem } from "../context/CartContext";
 
 export type OrderStatus = 'Nuovo' | 'In Preparazione' | 'Pronto' | 'Completato';
 
 export interface Order {
-  id: string;
-  items: CartItem[];
-  total: number;
+  order_id: number;
+  user_id?: number | null;
+  total_amount: number | string;
   status: OrderStatus;
-  createdAt: Date;
+  source?: string;
+  created_at: string;
+  updated_at?: string | null;
+  items: Array<{
+    product_id: number;
+    name: string;
+    quantity: number;
+    price: number | string;
+  }>;
 }

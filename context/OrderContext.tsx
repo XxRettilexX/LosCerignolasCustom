@@ -15,20 +15,17 @@ const OrderContext = createContext<OrderContextType | undefined>(undefined);
 export const OrderProvider = ({ children }: { children: ReactNode }) => {
   const [orders, setOrders] = useState<Order[]>([]);
   const { token } = useAuth();
-
   useEffect(() => {
     if (!token) return;
 
-    // Inizializza gli ordini
     setOrders(OrderService.getOrders());
-
-    // Si sottoscrive agli aggiornamenti
     const unsubscribe = OrderService.subscribe(updatedOrders => {
       setOrders(updatedOrders);
-    }, token ?? undefined);
+    }, token);
 
     return () => unsubscribe();
   }, [token]);
+
 
   const addOrder = (items: CartItem[], total: number) => {
     OrderService.addOrder(items, total, token ?? undefined);

@@ -1,10 +1,9 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Animated,
   FlatList,
   Image,
   StyleSheet,
@@ -14,15 +13,17 @@ import {
 } from 'react-native';
 import { api } from '../../api';
 import Header from '../../components/Header';
-import { useCart } from '../../context/CartContext'; // 🧠 Aggiunto
+import { useCart } from '../../context/CartContext';
 import { RootStackParamList } from '../../types/navigation';
 import { Product } from '../../types/product';
 
+/* 🎨 Palette Los Cerignola */
 const Colors = {
-  primary: '#FFD60A',
-  secondary: '#004AAD',
-  backgroundLight: '#FFF7E0',
-  text: '#001D3D',
+  primary: '#FFD60A', // giallo
+  secondary: '#004AAD', // blu
+  backgroundLight: '#FFF7E0', // crema
+  text: '#142C4D', // blu notte
+  white: '#FFFFFF',
 };
 
 type MenuScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Main'>;
@@ -35,34 +36,14 @@ const MenuScreen: React.FC<Props> = ({ navigation }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { addToCart } = useCart(); // ✅ Importa la funzione del contesto carrello
+  const { addToCart } = useCart();
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(20)).current;
-
+  /* 🔹 Caricamento prodotti dal DB */
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const fetchedProducts = await api.fetchProducts();
-
-        const normalizedProducts = fetchedProducts.map((p: any) => ({
-          ...p,
-          price: Number(p.price),
-        }));
-
-        setProducts(normalizedProducts);
-
-        Animated.parallel([
-          Animated.timing(fadeAnim, {
-            toValue: 1,
-            duration: 500,
-            useNativeDriver: true,
-          }),
-          Animated.spring(translateY, {
-            toValue: 0,
-            useNativeDriver: true,
-          }),
-        ]).start();
+        const fetched = await api.fetchProducts();
+        setProducts(fetched.map((p: any) => ({ ...p, price: Number(p.price) })));
       } catch (err) {
         console.error(err);
         setError('Errore durante il caricamento dei prodotti.');
@@ -70,146 +51,162 @@ const MenuScreen: React.FC<Props> = ({ navigation }) => {
         setLoading(false);
       }
     };
-
     fetchProducts();
   }, []);
 
+  /* 🔹 Aggiunta al carrello */
   const handleAddToCart = (item: Product) => {
-    addToCart({
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      quantity: 1,
-    });
-
+    addToCart({ id: item.id, name: item.name, price: item.price, quantity: 1 });
     Alert.alert('✅ Aggiunto al carrello', `${item.name} è stato aggiunto!`);
   };
 
+  /* 🔹 Singolo elemento del menù */
   const renderItem = ({ item }: { item: Product }) => (
-    <Animated.View
-      style={[
-        styles.card,
-        {
-          opacity: fadeAnim,
-          transform: [{ translateY }],
-        },
-      ]}
-    >
-      <TouchableOpacity
-        onPress={() => navigation.navigate('ProductDetail', { product: item })}
-        activeOpacity={0.85}
-      >
-        <LinearGradient colors={['#FFFFFF', '#FFF9E5']} style={styles.productCard}>
-          {item.image ? (
-            <Image source={{ uri: item.image }} style={styles.productImage} resizeMode="cover" />
-          ) : (
-            <View style={[styles.productImage, styles.placeholder]}>
-              <Text style={styles.placeholderText}>Nessuna immagine</Text>
-            </View>
-          )}
-
-          <View style={styles.textContainer}>
-            <Text style={styles.productName}>{item.name}</Text>
-            {item.description ? (
-              <Text style={styles.productDescription} numberOfLines={2}>
-                {item.description}
-              </Text>
-            ) : null}
-
-            <View style={styles.productFooter}>
-              <Text style={styles.price}>
-                {Number.isFinite(item.price) ? Number(item.price).toFixed(2) : '—'} €
-              </Text>
-
-              <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => handleAddToCart(item)} // ✅ Funzione collegata
-              >
-                <LinearGradient colors={[Colors.secondary, '#003080']} style={styles.gradientButton}>
-                  <Text style={styles.addText}>Aggiungi</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
+    <View style={styles.itemContainer}>
+      <View style={styles.leftBox}>
+        {item.image ? (
+          <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
+        ) : (
+          <View style={styles.placeholder}>
+            <Text style={styles.placeholderText}>🍕</Text>
           </View>
-        </LinearGradient>
-      </TouchableOpacity>
-    </Animated.View>
+        )}
+      </View>
+
+      <View style={styles.rightBox}>
+        <View style={styles.textRow}>
+          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.price}>€{item.price.toFixed(2)}</Text>
+        </View>
+
+        <TouchableOpacity
+          style={styles.detailButton}
+          onPress={() => navigation.navigate('ProductDetail', { product: item })}
+          activeOpacity={0.8}
+        >
+          <LinearGradient colors={[Colors.primary, '#E6C200']} style={styles.gradient}>
+            <Text style={styles.detailText}>Dettagli</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 
-  if (loading) {
+  /* 🔹 Stati di caricamento / errore */
+  if (loading)
     return (
-      <View style={[styles.container, styles.centered]}>
-        <ActivityIndicator size="large" color={Colors.primary} />
+      <View style={styles.center}>
+        <ActivityIndicator color={Colors.primary} size="large" />
         <Text style={styles.loadingText}>Caricamento menù...</Text>
       </View>
     );
-  }
 
-  if (error) {
+  if (error)
     return (
-      <View style={[styles.container, styles.centered]}>
+      <View style={styles.center}>
         <Text style={styles.errorText}>{error}</Text>
       </View>
     );
-  }
 
+  /* 🔹 Schermata principale */
   return (
     <View style={styles.container}>
       <Header title="Menù" showCart />
+
       <FlatList
         data={products}
-        renderItem={renderItem}
         keyExtractor={(item) => String(item.id)}
-        contentContainerStyle={styles.listContainer}
+        renderItem={renderItem}
+        contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
       />
     </View>
   );
 };
 
+/* 💅 Stili coerenti con la UI del mockup */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.backgroundLight,
-    paddingTop: 10,
   },
-  centered: { justifyContent: 'center', alignItems: 'center' },
-  loadingText: { color: Colors.text, marginTop: 10, fontSize: 16, fontWeight: '600' },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 8,
+    fontSize: 16,
+    color: Colors.text,
+    fontFamily: 'Nunito-Bold',
+  },
   errorText: { color: 'red', fontSize: 16 },
-  listContainer: { paddingHorizontal: 18, paddingBottom: 100 },
-  card: { marginBottom: 24 },
-  productCard: {
-    borderRadius: 22,
-    overflow: 'hidden',
-    backgroundColor: '#FFF',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 5,
+  list: {
+    paddingHorizontal: 10,
+    paddingVertical: 10,
   },
-  productImage: {
-    width: '100%',
-    height: 200,
-    borderTopLeftRadius: 22,
-    borderTopRightRadius: 22,
-  },
-  textContainer: { padding: 18 },
-  productName: { fontSize: 20, fontWeight: '800', color: Colors.text, marginBottom: 4 },
-  productDescription: {
-    fontSize: 14,
-    color: '#3A3A3A',
-    opacity: 0.9,
+  itemContainer: {
+    flexDirection: 'row',
+    backgroundColor: Colors.white,
+    borderRadius: 14,
     marginBottom: 10,
-    lineHeight: 20,
+    padding: 10,
+    alignItems: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
   },
-  productFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  price: { fontSize: 18, fontWeight: '700', color: Colors.primary },
-  addButton: { borderRadius: 25, overflow: 'hidden' },
-  gradientButton: { paddingVertical: 8, paddingHorizontal: 18, borderRadius: 25 },
-  addText: { color: '#FFF', fontWeight: '700', fontSize: 15, letterSpacing: 0.5 },
-  placeholder: { justifyContent: 'center', alignItems: 'center', backgroundColor: '#EEE', height: 180 },
-  placeholderText: { color: Colors.secondary, fontWeight: '600' },
+  leftBox: { marginRight: 10 },
+  image: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+  },
+  placeholder: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    backgroundColor: '#EEE',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  placeholderText: { fontSize: 22 },
+  rightBox: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  textRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  name: {
+    fontFamily: 'Nunito-Bold',
+    fontSize: 16,
+    color: Colors.text,
+  },
+  price: {
+    fontFamily: 'Nunito-Bold',
+    fontSize: 15,
+    color: Colors.secondary,
+  },
+  detailButton: {
+    alignSelf: 'flex-start',
+    marginTop: 6,
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  gradient: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  detailText: {
+    fontFamily: 'Nunito-Bold',
+    color: Colors.text,
+    fontSize: 13,
+  },
 });
 
 export default MenuScreen;

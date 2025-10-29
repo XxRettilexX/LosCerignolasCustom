@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import * as Font from 'expo-font';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -18,14 +19,13 @@ import { useAuth } from '../../context/AuthContext';
 import { TabletStackParamList } from '../../types/navigation';
 
 /* -------------------------------------------------------------------------- */
-/* 🎨 Palette specifica per lo staff cucina                                   */
+/* 🎨 Palette coerente Los Cerignola                                          */
 /* -------------------------------------------------------------------------- */
 const Colors = {
-  primary: '#2E7D32', // Verde scuro (cucina)
-  secondary: '#81C784', // Verde chiaro
-  background: '#F1F8E9', // Verde molto chiaro
-  text: '#1B5E20', // Verde profondo
-  accent: '#C8E6C9', // Verde tenue
+  primary: '#FFD60A',     // 🟡 Giallo
+  secondary: '#004AAD',   // 🔵 Blu
+  background: '#FFF7E0',  // ⚪ Crema
+  text: '#142C4D',        // ⚫ Blu Notte
 };
 
 /* -------------------------------------------------------------------------- */
@@ -33,6 +33,9 @@ const Colors = {
 /* -------------------------------------------------------------------------- */
 type KitchenNavigationProp = StackNavigationProp<TabletStackParamList>;
 
+/* -------------------------------------------------------------------------- */
+/* 🧑‍🍳 Component                                                              */
+/* -------------------------------------------------------------------------- */
 const KitchenLoginScreen: React.FC = () => {
   const navigation = useNavigation<KitchenNavigationProp>();
   const { login } = useAuth();
@@ -40,9 +43,23 @@ const KitchenLoginScreen: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [fontLoaded, setFontLoaded] = useState(false);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(40)).current;
+
+  /* ------------------------------------------------------------ */
+  /* 🅰️ Caricamento font Nunito                                 */
+  /* ------------------------------------------------------------ */
+  useEffect(() => {
+    (async () => {
+      await Font.loadAsync({
+        Nunito: require('../../assets/fonts/Nunito-Regular.ttf'),
+        'Nunito-Bold': require('../../assets/fonts/Nunito-Bold.ttf'),
+      });
+      setFontLoaded(true);
+    })();
+  }, []);
 
   /* ✨ Animazioni in ingresso */
   useEffect(() => {
@@ -61,7 +78,7 @@ const KitchenLoginScreen: React.FC = () => {
     ]).start();
   }, []);
 
-  /* 🧠 Logica di login per la cucina */
+  /* 🧠 Logica di login */
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Errore', 'Inserisci email e password per accedere.');
@@ -76,7 +93,7 @@ const KitchenLoginScreen: React.FC = () => {
       console.log("✅ Login staff riuscito, vado alla schermata Kitchen...");
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Main' }], // oppure 'Kitchen' se hai uno stack dedicato
+        routes: [{ name: 'Main' }], // oppure 'Kitchen' se hai stack dedicato
       });
     } catch (error: any) {
       console.error("❌ Errore di login staff:", error.message);
@@ -86,9 +103,14 @@ const KitchenLoginScreen: React.FC = () => {
     }
   };
 
+  if (!fontLoaded) return null;
+
+  /* ------------------------------------------------------------ */
+  /* 🖼️ UI                                                      */
+  /* ------------------------------------------------------------ */
   return (
     <LinearGradient
-      colors={[Colors.background, Colors.accent, '#E8F5E9']}
+      colors={[Colors.background, '#FFF9EB', Colors.background]}
       style={styles.container}
     >
       <KeyboardAvoidingView
@@ -108,6 +130,7 @@ const KitchenLoginScreen: React.FC = () => {
             </Text>
           </View>
 
+          {/* ✉️ Email */}
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -118,6 +141,7 @@ const KitchenLoginScreen: React.FC = () => {
             placeholderTextColor="#7A7A7A"
           />
 
+          {/* 🔒 Password */}
           <TextInput
             style={styles.input}
             placeholder="Password"
@@ -127,6 +151,7 @@ const KitchenLoginScreen: React.FC = () => {
             placeholderTextColor="#7A7A7A"
           />
 
+          {/* 🔘 Pulsante Login */}
           <TouchableOpacity
             style={[styles.button, loading && { opacity: 0.7 }]}
             onPress={handleLogin}
@@ -134,11 +159,11 @@ const KitchenLoginScreen: React.FC = () => {
             activeOpacity={0.8}
           >
             <LinearGradient
-              colors={[Colors.primary, Colors.secondary]}
+              colors={[Colors.secondary, '#002F73']}
               style={styles.gradientBtn}
             >
               {loading ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={Colors.primary} />
               ) : (
                 <Text style={styles.buttonText}>Accedi</Text>
               )}
@@ -166,12 +191,14 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   title: {
-    fontSize: 28,
+    fontFamily: 'Nunito-Bold',
+    fontSize: 30,
     fontWeight: '800',
     color: Colors.text,
     marginBottom: 5,
   },
   subtitle: {
+    fontFamily: 'Nunito',
     fontSize: 16,
     color: Colors.text,
     opacity: 0.8,
@@ -183,11 +210,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 15,
     paddingHorizontal: 20,
+    fontFamily: 'Nunito',
     fontSize: 16,
     color: Colors.text,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: '#CCC',
+    borderColor: '#EEE',
   },
   button: {
     width: '100%',
@@ -200,7 +228,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    color: '#FFF',
+    fontFamily: 'Nunito-Bold',
+    color: Colors.primary,
     fontSize: 18,
     fontWeight: '700',
   },

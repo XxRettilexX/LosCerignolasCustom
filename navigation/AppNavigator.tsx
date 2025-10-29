@@ -30,7 +30,9 @@ import TabletOrderDetailScreen from '../screens/tablet/OrderDetailScreen';
 
 const deviceType = getDeviceType();
 
-// --- Tablet Auth Navigator ---
+/* -------------------------------------------------------------------------- */
+/* 🎯 AUTH NAVIGATOR (TABLET)                                                 */
+/* -------------------------------------------------------------------------- */
 const AuthStack = createStackNavigator<AuthStackParamList>();
 const TabletAuthNavigator = () => (
   <AuthStack.Navigator screenOptions={{ headerShown: false }}>
@@ -38,7 +40,9 @@ const TabletAuthNavigator = () => (
   </AuthStack.Navigator>
 );
 
-// --- Mobile Navigator (No required login) ---
+/* -------------------------------------------------------------------------- */
+/* 📱 MOBILE NAVIGATOR (Bottom Tabs + Stack)                                  */
+/* -------------------------------------------------------------------------- */
 const MobileStack = createStackNavigator<RootStackParamList>();
 const MobileTab = createBottomTabNavigator<MainTabParamList>();
 
@@ -46,35 +50,85 @@ const MobileMainNavigator = () => (
   <MobileTab.Navigator
     screenOptions={({ route }) => ({
       headerShown: false,
+      tabBarStyle: {
+        backgroundColor: Colors.backgroundLight,
+        borderTopColor: '#E0E0E0',
+        height: 60,
+        paddingBottom: 5,
+      },
+      tabBarLabelStyle: {
+        fontSize: 12,
+        fontWeight: '700',
+      },
       tabBarIcon: ({ focused, color, size }) => {
         let iconName;
-        if (route.name === 'Home') iconName = focused ? 'home' : 'home-outline';
-        else if (route.name === 'Menu') iconName = focused ? 'pizza' : 'pizza-outline';
-        else if (route.name === 'Orders') iconName = focused ? 'receipt' : 'receipt-outline';
-        else if (route.name === 'Profile') iconName = focused ? 'person' : 'person-outline';
+
+        switch (route.name) {
+          case 'Home':
+            iconName = focused ? 'home' : 'home-outline';
+            break;
+          case 'Menu':
+            iconName = focused ? 'pizza' : 'pizza-outline';
+            break;
+          case 'Cart':
+            iconName = focused ? 'cart' : 'cart-outline';
+            break;
+          case 'Orders':
+            iconName = focused ? 'receipt' : 'receipt-outline';
+            break;
+          case 'Profile':
+            iconName = focused ? 'person' : 'person-outline';
+            break;
+        }
+
         return <Ionicons name={iconName as any} size={size} color={color} />;
       },
       tabBarActiveTintColor: Colors.primary,
       tabBarInactiveTintColor: Colors.secondary,
     })}
   >
-    <MobileTab.Screen name="Home" component={MobileHomeScreen} />
-    <MobileTab.Screen name="Menu" component={MobileMenuScreen} />
-    <MobileTab.Screen name="Orders" component={MobileOrdersScreen} />
-    <MobileTab.Screen name="Profile" component={MobileProfileScreen} />
+    <MobileTab.Screen
+      name="Home"
+      component={MobileHomeScreen}
+      options={{ title: 'Home' }}
+    />
+    <MobileTab.Screen
+      name="Menu"
+      component={MobileMenuScreen}
+      options={{ title: 'Menù' }}
+    />
+    <MobileTab.Screen
+      name="Cart"
+      component={MobileCartScreen}
+      options={{ title: 'Carrello' }}
+    />
+    <MobileTab.Screen
+      name="Orders"
+      component={MobileOrdersScreen}
+      options={{ title: 'Ordini' }}
+    />
+    <MobileTab.Screen
+      name="Profile"
+      component={MobileProfileScreen}
+      options={{ title: 'Profilo' }}
+    />
   </MobileTab.Navigator>
 );
 
+/* -------------------------------------------------------------------------- */
+/* 🧭 MOBILE STACK (con Product Detail e Login)                               */
+/* -------------------------------------------------------------------------- */
 const MobileAppStack = () => (
   <MobileStack.Navigator screenOptions={{ presentation: 'modal', headerShown: false }}>
     <MobileStack.Screen name="Main" component={MobileMainNavigator} options={{ headerShown: false }} />
     <MobileStack.Screen name="ProductDetail" component={MobileProductDetailScreen} options={{ headerShown: false }} />
-    <MobileStack.Screen name="Cart" component={MobileCartScreen} options={{ headerShown: false }} />
     <MobileStack.Screen name="Login" component={MobileLoginScreen} />
   </MobileStack.Navigator>
 );
 
-// --- Tablet Navigator (Required login) ---
+/* -------------------------------------------------------------------------- */
+/* 💻 TABLET STACK (solo se loggato)                                         */
+/* -------------------------------------------------------------------------- */
 const TabletStack = createStackNavigator<TabletStackParamList>();
 
 const TabletMainNavigator = () => (
@@ -82,19 +136,16 @@ const TabletMainNavigator = () => (
     <TabletStack.Screen name="Main" component={TabletKitchenScreen} />
     <TabletStack.Screen name="OrderDetail" component={TabletOrderDetailScreen} />
   </TabletStack.Navigator>
-)
+);
 
-// --- Main App Navigator ---
+/* -------------------------------------------------------------------------- */
+/* 🌍 MAIN NAVIGATOR                                                         */
+/* -------------------------------------------------------------------------- */
 const AppNavigator = () => {
   const { user } = useAuth();
 
-  const renderMobileNavigator = () => {
-    return <MobileAppStack />;
-  };
-
-  const renderTabletNavigator = () => {
-    return user ? <TabletMainNavigator /> : <TabletAuthNavigator />;
-  };
+  const renderMobileNavigator = () => <MobileAppStack />;
+  const renderTabletNavigator = () => (user ? <TabletMainNavigator /> : <TabletAuthNavigator />);
 
   return (
     <NavigationContainer>

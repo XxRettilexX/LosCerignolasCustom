@@ -1,117 +1,105 @@
+import { RouteProp, useRoute } from '@react-navigation/native';
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
-import { useOrders } from '../../context/OrderContext';
-import { Colors } from '../../constants/Colors';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Header from '../../components/Header';
+import { Colors } from '../../constants/Colors';
+import { useOrders } from '../../context/OrderContext';
+import { RootStackParamList } from '../../types/navigation';
+import { Order } from '../../types/order';
 
-const OrderDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, navigation }) => {
+type OrderDetailRouteProp = RouteProp<RootStackParamList, 'OrderDetail'>;
+
+const OrderDetailScreen: React.FC = () => {
+  const route = useRoute<OrderDetailRouteProp>();
   const { orderId } = route.params;
   const { orders, updateOrderStatus } = useOrders();
-  const order = orders.find(o => o.id === orderId);
+
+  // trova l'ordine giusto
+  const order: Order | undefined = orders.find(o => o.order_id === orderId);
 
   if (!order) {
     return (
-      <View style={styles.container}>
-        <Header title="Ordine non trovato" canGoBack />
-        <View style={styles.centered}>
-          <Text>Dettagli dell'ordine non disponibili.</Text>
-        </View>
+      <View style={styles.center}>
+        <Text style={styles.error}>Ordine non trovato</Text>
       </View>
     );
   }
 
-  const handleStatusChange = (status) => {
-    updateOrderStatus(order.id, status);
-    navigation.goBack();
+  const handleUpdateStatus = () => {
+    const next =
+      order.status === 'Nuovo'
+        ? 'In Preparazione'
+        : order.status === 'In Preparazione'
+          ? 'Pronto'
+          : 'Completato';
+    updateOrderStatus(order.order_id.toString(), next);
   };
 
   return (
     <View style={styles.container}>
-      <Header title={`Ordine #${order.id.substring(0, 5)}`} canGoBack />
-      <View style={styles.content}>
-        <FlatList
-          data={order.items}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.itemContainer}>
-              <Text style={styles.itemName}>{item.name} (x{item.quantity})</Text>
-            </View>
-          )}
-          ListHeaderComponent={<Text style={styles.listHeader}>Riepilogo</Text>}
-        />
-        <View style={styles.actionsContainer}>
-          {order.status === 'Nuovo' && (
-            <TouchableOpacity
-              style={[styles.button, styles.inProgressButton]}
-              onPress={() => handleStatusChange('In Preparazione')}
-            >
-              <Text style={styles.buttonText}>Inizia Preparazione</Text>
-            </TouchableOpacity>
-          )}
-          {order.status === 'In Preparazione' && (
-            <TouchableOpacity
-              style={[styles.button, styles.readyButton]}
-              onPress={() => handleStatusChange('Pronto')}
-            >
-              <Text style={styles.buttonText}>Ordine Pronto</Text>
-            </TouchableOpacity>
-          )}
-        </View>
+      <Header title={`Ordine #${order.order_id}`} canGoBack />
+
+      <View style={styles.infoContainer}>
+        <Text style={styles.status}>🟡 Stato: {order.status}</Text>
+        <Text style={styles.total}>
+          💰 Totale: {Number(order.total_amount).toFixed(2)} €
+        </Text>
+        <Text style={styles.source}>👤 Fonte: {order.source || '—'}</Text>
+        <Text style={styles.time}>🕒 {order.created_at}</Text>
       </View>
+
+      <Text style={styles.sectionTitle}>🍕 Prodotti</Text>
+
+      <FlatList
+        data={order.items}
+        keyExtractor={(item, index) => `${item.product_id}-${index}`}
+        renderItem={({ item }) => (
+          <View style={styles.item}>
+            <Text style={styles.itemName}>{item.name}</Text>
+            <Text style={styles.itemQty}>x{item.quantity}</Text>
+            <Text style={styles.itemPrice}>
+              {Number(item.price).toFixed(2)} €
+            </Text>
+          </View>
+        )}
+      />
+
+      <TouchableOpacity style={styles.button} onPress={handleUpdateStatus}>
+        <Text style={styles.buttonText}>Aggiorna stato →</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-  },
-  listHeader: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: Colors.secondary,
-    marginBottom: 15,
-  },
-  itemContainer: {
+  container: { flex: 1, backgroundColor: Colors.background, padding: 16 },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  error: { fontSize: 18, color: 'red' },
+  infoContainer: { marginBottom: 16, backgroundColor: Colors.white, padding: 16, borderRadius: 10 },
+  status: { fontSize: 18, fontWeight: 'bold', color: Colors.secondary },
+  total: { fontSize: 18, color: Colors.primary, marginTop: 6 },
+  source: { fontSize: 14, color: Colors.grey, marginTop: 4 },
+  time: { fontSize: 13, color: Colors.grey, marginTop: 4 },
+  sectionTitle: { fontSize: 20, fontWeight: 'bold', color: Colors.text, marginVertical: 10 },
+  item: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     backgroundColor: Colors.white,
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
+    padding: 14,
+    borderRadius: 10,
+    marginBottom: 8,
   },
-  itemName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: Colors.text,
-  },
-  actionsContainer: {
-    padding: 20,
-  },
+  itemName: { fontSize: 16, fontWeight: '600', color: Colors.text },
+  itemQty: { fontSize: 16, color: Colors.secondary },
+  itemPrice: { fontSize: 16, fontWeight: 'bold', color: Colors.primary },
   button: {
-    padding: 20,
-    borderRadius: 8,
+    marginTop: 20,
+    backgroundColor: Colors.secondary,
+    padding: 14,
+    borderRadius: 10,
     alignItems: 'center',
   },
-  buttonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: Colors.text,
-  },
-  inProgressButton: {
-    backgroundColor: Colors.primary,
-  },
-  readyButton: {
-    backgroundColor: '#28a745', // Green color
-  },
+  buttonText: { color: 'white', fontSize: 16, fontWeight: 'bold' },
 });
 
 export default OrderDetailScreen;

@@ -2,22 +2,29 @@ import { api } from '../api';
 import { CartItem } from '../context/CartContext';
 import { Order, OrderStatus } from '../types/order';
 
-// 🔄 Stato locale simulato
+// Stato locale simulato
 let orders: Order[] = [];
 let listeners: Array<(orders: Order[]) => void> = [];
 let pollingInterval: NodeJS.Timeout | null = null;
 let currentToken: string | undefined;
 
-// 🔊 Notifica i listener
-const broadcast = () => {
-  listeners.forEach(listener => listener(orders));
-};
+const broadcast = () => listeners.forEach(listener => listener(orders));
 
-// 🔁 Aggiorna lista ordini periodicamente
+// 🔁 Fetch e broadcast
 const fetchAndBroadcastOrders = async () => {
   try {
     const fetchedOrders = await api.fetchOrders(currentToken);
-    orders = fetchedOrders;
+
+    // 🔹 Normalizza i dati
+    orders = fetchedOrders.map(o => ({
+      ...o,
+      total_amount: parseFloat(o.total_amount),
+      items: o.items.map((i: any) => ({
+        ...i,
+        price: parseFloat(i.price)
+      }))
+    }));
+
     broadcast();
   } catch (error: any) {
     if (error.message.includes("403")) {
@@ -28,9 +35,8 @@ const fetchAndBroadcastOrders = async () => {
   }
 };
 
-// 🧩 Servizio centrale ordini
+// 🧩 Servizio Ordini
 export const OrderService = {
-  // ➕ Aggiungi nuovo ordine
   addOrder: async (items: CartItem[], total: number, token?: string) => {
     try {
       const newOrder = await api.createOrder({ items, total }, token);
@@ -41,40 +47,35 @@ export const OrderService = {
     }
   },
 
-  // 🔄 Aggiorna stato ordine
   updateOrderStatus: async (orderId: string, status: OrderStatus, token?: string) => {
     try {
-      if (!api.updateOrderStatus) {
-        console.warn("⚠️ api.updateOrderStatus non definito nel modulo API.");
-        return;
-      }
-
       const updatedOrder = await api.updateOrderStatus(orderId, status, token);
+
+      // 🔹 aggiorna SOLO quell’ordine localmente
       orders = orders.map(order =>
-        order.id === orderId
-          ? { ...order, status: updatedOrder.new_status || status }
+        String(order.order_id) === String(orderId)
+          ? { ...order, status }
           : order
       );
-      broadcast();
+
+      broadcast(); // notifica i listener (KitchenDashboard)
+      return updatedOrder;
     } catch (error) {
       console.error("Error updating order status in OrderService:", error);
     }
   },
 
-  // 📦 Ottieni lista ordini
   getOrders: () => orders,
 
-  // 👂 Iscriviti agli aggiornamenti
   subscribe: (listener: (orders: Order[]) => void, token?: string): (() => void) => {
     listeners.push(listener);
     currentToken = token;
 
     if (!pollingInterval) {
-      fetchAndBroadcastOrders(); // primo fetch immediato
-      pollingInterval = setInterval(fetchAndBroadcastOrders, 10000); // ogni 10 sec
+      fetchAndBroadcastOrders();
+      pollingInterval = setInterval(fetchAndBroadcastOrders, 1000); // ogni 10s
     }
 
-    // ➖ Disiscrizione
     return () => {
       listeners = listeners.filter(l => l !== listener);
       if (listeners.length === 0 && pollingInterval) {
