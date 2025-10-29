@@ -3,72 +3,49 @@ import { Order } from '../types/order';
 import { Product } from '../types/product';
 import { User } from '../types/user';
 
-const API_BASE_URL = 'http://192.168.1.26/api/'; // ✅
+const API_BASE_URL = 'http://192.168.1.26/los-cerignola-api/api'; // ✅ percorso coerente
 
 export const api = {
+  // 🛒 Prodotti
   fetchProducts: async (): Promise<Product[]> => {
-    const response = await fetch(`${API_BASE_URL}products.php`);
+    const response = await fetch(`${API_BASE_URL}/products`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     return await response.json();
   },
 
-  // 🔹 Login
+  // 🔐 Login
   login: async (email: string, password: string): Promise<{ user: User; token: string }> => {
-    console.log('📤 Tentativo login:', { email, password });
-
-    const response = await fetch(`${API_BASE_URL}login.php`, {
+    const response = await fetch(`${API_BASE_URL}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
 
-    console.log('📥 Status risposta login:', response.status);
-
     if (!response.ok) {
-      try {
-        const errorData = await response.json();
-        console.log('❌ Errore login:', errorData);
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-      } catch {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json();
-    console.log('✅ Login riuscito:', data);
-    return { user: data.user, token: data.token };
+    return await response.json();
   },
 
-  // 🔹 Ordini
-  fetchOrders: async (token?: string): Promise<any[]> => {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-
+  // 📦 Ottieni tutti gli ordini
+  fetchOrders: async (token?: string): Promise<Order[]> => {
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = `Bearer ${token}`;
 
-    const response = await fetch(`${API_BASE_URL}orders.php`, {
-      method: 'GET',
-      headers,
-    });
+    const response = await fetch(`${API_BASE_URL}/orders`, { method: 'GET', headers });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    try {
-      return await response.json();
-    } catch {
-      throw new Error("Invalid JSON response");
-    }
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
   },
 
-
+  // 🧾 Crea nuovo ordine
   createOrder: async (order: { items: CartItem[]; total: number }, token?: string): Promise<Order> => {
     const headers: HeadersInit = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = `Bearer ${token}`;
 
-    const response = await fetch(`${API_BASE_URL}orders.php`, {
+    const response = await fetch(`${API_BASE_URL}/orders`, {
       method: 'POST',
       headers,
       body: JSON.stringify(order),
@@ -77,29 +54,41 @@ export const api = {
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     return await response.json();
   },
+
+  // 🔄 Aggiorna stato ordine
   updateOrderStatus: async (orderId: string, status: string, token?: string): Promise<any> => {
-    const response = await fetch(`${API_BASE_URL}orders.php`, {
+    const url = `${API_BASE_URL}/orders/${orderId}?status=${encodeURIComponent(status)}`;
+
+    const response = await fetch(url, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      body: JSON.stringify({
-        orderId: Number(orderId), // ✅ assicurati che arrivi come numero
-        status: status,           // ✅ esattamente come "Nuovo", "In Preparazione", ecc.
-      }),
     });
 
-    if (!response.ok) {
-      const text = await response.text(); // utile per debug
-      console.error("❌ Errore risposta:", text);
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     return await response.json();
   },
+
+  // 💳 Simula pagamento → elimina ordine
+  payOrder: async (orderId: number, token?: string) => {
+    const headers: HeadersInit = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const response = await fetch(`${API_BASE_URL}/orders?action=delete`, {
+      method: 'POST', // POST al posto di DELETE per compatibilità XAMPP
+      headers,
+      body: JSON.stringify({ order_id: orderId }),
+    });
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json(); // { success: true, message: 'Ordine eliminato con successo' }
+  },
+
+  // 🎁 Punti fedeltà (placeholder)
   fetchLoyaltyPoints: async (token: string) => {
-    const response = await fetch(`${API_BASE_URL}loyalty.php`, {
+    const response = await fetch(`${API_BASE_URL}/loyalty`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error(`HTTP error ${response.status}`);
@@ -107,7 +96,7 @@ export const api = {
   },
 
   updateLoyaltyPoints: async (action: 'add' | 'redeem', points: number, token: string) => {
-    const response = await fetch(`${API_BASE_URL}loyalty.php`, {
+    const response = await fetch(`${API_BASE_URL}/loyalty`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -118,30 +107,4 @@ export const api = {
     if (!response.ok) throw new Error(`HTTP error ${response.status}`);
     return await response.json();
   },
-
-  async payOrder(orderId: number, token?: string) {
-    try {
-      const response = await fetch(`${API_BASE_URL}/orders/delete.php`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ order_id: orderId }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return await response.json(); // backend restituisce { success: true }
-    } catch (error) {
-      console.error('Errore payOrder:', error);
-      throw error;
-    }
-  },
-
-
-
-
 };
