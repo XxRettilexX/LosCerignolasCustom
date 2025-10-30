@@ -12,6 +12,7 @@ export type MainTabParamList = {
 
 /* Stack principale mobile */
 export type RootStackParamList = {
+  Loading: undefined; // 🔥 AGGIUNTO
   Main: undefined;
   ProductDetail: { product: Product };
   Cart: undefined;

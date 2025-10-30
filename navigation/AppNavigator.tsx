@@ -15,16 +15,17 @@ import {
 } from '../types/navigation';
 import { getDeviceType } from '../utils/deviceDetector';
 
-// Mobile
+// Mobile Screens
 import MobileCartScreen from '../screens/mobile/CartScreen';
-import CheckoutScreen from '../screens/mobile/CheckoutScreen'; // ✅ importa
+import CheckoutScreen from '../screens/mobile/CheckoutScreen';
 import MobileHomeScreen from '../screens/mobile/HomeScreen';
+import LoadingScreen from '../screens/mobile/LoadingScreen'; // 🔥 AGGIUNTO
 import MobileMenuScreen from '../screens/mobile/MenuScreen';
 import MobileOrdersScreen from '../screens/mobile/OrdersScreen';
 import MobileProductDetailScreen from '../screens/mobile/ProductDetailScreen';
 import MobileProfileScreen from '../screens/mobile/ProfileScreen';
 
-// Tablet
+// Tablet Screens
 import TabletLoginScreen from '../screens/tablet/KitchenLoginScreen';
 import TabletKitchenScreen from '../screens/tablet/KitchenScreen';
 import TabletOrderDetailScreen from '../screens/tablet/OrderDetailScreen';
@@ -68,20 +69,18 @@ const MobileMainNavigator = () => (
   </MobileTab.Navigator>
 );
 
-
-
-
+// --- Mobile Stack con LoadingScreen iniziale ---
 const MobileAppStack = () => (
   <MobileStack.Navigator screenOptions={{ presentation: 'modal', headerShown: false }}>
+    {/* 👇 Prima schermata: Loading */}
+    <MobileStack.Screen name="Loading" component={LoadingScreen} />
     <MobileStack.Screen name="Main" component={MobileMainNavigator} />
     <MobileStack.Screen name="ProductDetail" component={MobileProductDetailScreen} />
     <MobileStack.Screen name="Checkout" component={CheckoutScreen} />
   </MobileStack.Navigator>
 );
 
-
-
-// --- Tablet Navigator (login richiesto) ---
+// --- Tablet Navigator ---
 const TabletStack = createStackNavigator<TabletStackParamList>();
 const TabletMainNavigator = () => (
   <TabletStack.Navigator screenOptions={{ headerShown: false }}>

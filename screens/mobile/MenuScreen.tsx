@@ -4,8 +4,10 @@ import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Dimensions,
   FlatList,
   Image,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -30,6 +32,11 @@ type MenuScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Main'>;
 interface Props {
   navigation: MenuScreenNavigationProp;
 }
+
+/* 📱 Calcolo dimensioni dinamiche */
+const { width } = Dimensions.get('window');
+const IMAGE_SIZE = width * 0.18; // immagini proporzionali
+const CARD_PADDING = width * 0.03;
 
 const MenuScreen: React.FC<Props> = ({ navigation }) => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -81,7 +88,7 @@ const MenuScreen: React.FC<Props> = ({ navigation }) => {
         <TouchableOpacity
           style={styles.detailButton}
           onPress={() => navigation.navigate('ProductDetail', { product: item })}
-          activeOpacity={0.8}
+          activeOpacity={0.85}
         >
           <LinearGradient colors={[Colors.primary, '#E6C200']} style={styles.gradient}>
             <Text style={styles.detailText}>Dettagli</Text>
@@ -110,8 +117,6 @@ const MenuScreen: React.FC<Props> = ({ navigation }) => {
   /* 🔹 Schermata principale */
   return (
     <View style={styles.container}>
-
-
       <FlatList
         data={products}
         keyExtractor={(item) => String(item.id)}
@@ -123,11 +128,12 @@ const MenuScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-/* 💅 Stili coerenti con la UI del mockup */
+/* 💅 Stili moderni, responsive e fluidi */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.backgroundLight,
+    paddingTop: Platform.OS === 'ios' ? 10 : 5,
   },
   center: {
     flex: 1,
@@ -135,43 +141,57 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: 8,
+    marginTop: 10,
     fontSize: 16,
     color: Colors.text,
-    fontFamily: 'Nunito-Bold',
+    fontWeight: '600',
   },
-  errorText: { color: 'red', fontSize: 16 },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
+  },
   list: {
-    paddingHorizontal: 10,
-    paddingVertical: 10,
+    paddingHorizontal: width * 0.04,
+    paddingBottom: 20,
   },
   itemContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.white,
-    borderRadius: 14,
-    marginBottom: 10,
-    padding: 10,
     alignItems: 'center',
-    elevation: 2,
+    backgroundColor: Colors.white,
+    borderRadius: 18,
+    marginBottom: 14,
+    padding: CARD_PADDING,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    elevation: 4,
+    borderWidth: 0.8,
+    borderColor: 'rgba(0,0,0,0.05)',
   },
-  leftBox: { marginRight: 10 },
+  leftBox: {
+    marginRight: 14,
+  },
   image: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
+    width: IMAGE_SIZE,
+    height: IMAGE_SIZE,
+    borderRadius: 14,
+    borderWidth: 2,
+    borderColor: Colors.primary,
   },
   placeholder: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
+    width: IMAGE_SIZE,
+    height: IMAGE_SIZE,
+    borderRadius: 14,
     backgroundColor: '#EEE',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.primary,
   },
-  placeholderText: { fontSize: 22 },
+  placeholderText: {
+    fontSize: 28,
+  },
   rightBox: {
     flex: 1,
     justifyContent: 'center',
@@ -179,32 +199,39 @@ const styles = StyleSheet.create({
   textRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   name: {
-    fontFamily: 'Nunito-Bold',
-    fontSize: 16,
+    fontSize: width * 0.045,
+    fontWeight: '800',
     color: Colors.text,
+    marginBottom: 4,
   },
   price: {
-    fontFamily: 'Nunito-Bold',
-    fontSize: 15,
+    fontSize: width * 0.04,
+    fontWeight: '700',
     color: Colors.secondary,
   },
   detailButton: {
     alignSelf: 'flex-start',
-    marginTop: 6,
-    borderRadius: 6,
+    marginTop: 8,
+    borderRadius: 8,
     overflow: 'hidden',
+    shadowColor: Colors.secondary,
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3,
   },
   gradient: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 8,
   },
   detailText: {
-    fontFamily: 'Nunito-Bold',
+    fontWeight: '700',
     color: Colors.text,
-    fontSize: 13,
+    fontSize: width * 0.035,
+    letterSpacing: 0.3,
   },
 });
 
