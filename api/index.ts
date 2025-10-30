@@ -3,7 +3,7 @@ import { Order } from '../types/order';
 import { Product } from '../types/product';
 import { User } from '../types/user';
 
-const API_BASE_URL = 'http://172.20.10.5/los-cerignola-api/api'; // ✅ percorso coerente
+export const API_BASE_URL = 'http://172.20.10.5/los-cerignola-api/api'; // ✅ percorso coerente
 
 export const api = {
   // 🛒 Prodotti
@@ -128,5 +128,16 @@ export const api = {
     if (!response.ok) throw new Error(`HTTP error ${response.status}`);
     return await response.json();
   },
+
+  redeemDiscount: async (userId: number) => {
+    const response = await fetch(`${API_BASE_URL}loyalty`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: userId, action: 'redeem-discount' }),
+    });
+    return await response.json();
+  },
+
+
 
 };

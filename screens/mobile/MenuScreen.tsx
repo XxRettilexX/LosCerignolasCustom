@@ -4,10 +4,9 @@ import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Dimensions,
   FlatList,
   Image,
-  Platform,
+  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -18,12 +17,12 @@ import { useCart } from '../../context/CartContext';
 import { RootStackParamList } from '../../types/navigation';
 import { Product } from '../../types/product';
 
-/* 🎨 Palette Los Cerignola */
+/* 🎨 Palette Los Cerignolas */
 const Colors = {
-  primary: '#FFD60A', // giallo
-  secondary: '#004AAD', // blu
-  backgroundLight: '#FFF7E0', // crema
-  text: '#142C4D', // blu notte
+  primary: '#FFD60A',
+  secondary: '#004AAD',
+  backgroundLight: '#FFF7E0',
+  text: '#142C4D',
   white: '#FFFFFF',
 };
 
@@ -33,10 +32,23 @@ interface Props {
   navigation: MenuScreenNavigationProp;
 }
 
-/* 📱 Calcolo dimensioni dinamiche */
-const { width } = Dimensions.get('window');
-const IMAGE_SIZE = width * 0.18; // immagini proporzionali
-const CARD_PADDING = width * 0.03;
+/* 🖼️ Immagini locali per le pizze */
+const pizzaImages: Record<string, any> = {
+  Margherita: require('../../assets/pizze/margherita.jpg'),
+  Diavola: require('../../assets/pizze/diavola.jpg'),
+  Napoli: require('../../assets/pizze/napoli.jpg'),
+  Capricciosa: require('../../assets/pizze/capricciosa.jpg'),
+  Prosciutto: require('../../assets/pizze/prosciutto.jpg'),
+};
+
+/* 🍽️ Allergeni associati ad alcune pizze */
+const allergenIcons: Record<string, string[]> = {
+  Margherita: ['🌾', '🧀'], // farina, latticini
+  Diavola: ['🌾', '🧀', '🌶️'],
+  Napoli: ['🌾', '🍅', '🐟'],
+  Capricciosa: ['🌾', '🧀', '🥚'],
+  Prosciutto: ['🌾', '🧀', '🥩'],
+};
 
 const MenuScreen: React.FC<Props> = ({ navigation }) => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -44,7 +56,7 @@ const MenuScreen: React.FC<Props> = ({ navigation }) => {
   const [error, setError] = useState<string | null>(null);
   const { addToCart } = useCart();
 
-  /* 🔹 Caricamento prodotti dal DB */
+  /* 🔹 Caricamento prodotti */
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -66,12 +78,14 @@ const MenuScreen: React.FC<Props> = ({ navigation }) => {
     Alert.alert('✅ Aggiunto al carrello', `${item.name} è stato aggiunto!`);
   };
 
-  /* 🔹 Singolo elemento del menù */
+  /* 🔹 Singolo elemento */
   const renderItem = ({ item }: { item: Product }) => (
     <View style={styles.itemContainer}>
       <View style={styles.leftBox}>
         {item.image ? (
           <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
+        ) : pizzaImages[item.name] ? (
+          <Image source={pizzaImages[item.name]} style={styles.image} resizeMode="cover" />
         ) : (
           <View style={styles.placeholder}>
             <Text style={styles.placeholderText}>🍕</Text>
@@ -80,25 +94,40 @@ const MenuScreen: React.FC<Props> = ({ navigation }) => {
       </View>
 
       <View style={styles.rightBox}>
+        {/* 🔸 Nome + Allergen icons inline */}
         <View style={styles.textRow}>
-          <Text style={styles.name}>{item.name}</Text>
+          <View style={styles.nameRow}>
+            <Text style={styles.name}>{item.name}</Text>
+            {(allergenIcons[item.name] || ['❄️']).map((icon, i) => (
+              <Text key={i} style={styles.allergenIcon}>
+                {icon}
+              </Text>
+            ))}
+          </View>
           <Text style={styles.price}>€{item.price.toFixed(2)}</Text>
         </View>
 
         <TouchableOpacity
           style={styles.detailButton}
           onPress={() => navigation.navigate('ProductDetail', { product: item })}
-          activeOpacity={0.85}
+          activeOpacity={0.8}
         >
           <LinearGradient colors={[Colors.primary, '#E6C200']} style={styles.gradient}>
             <Text style={styles.detailText}>Dettagli</Text>
           </LinearGradient>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => handleAddToCart(item)}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.addButtonText}>Aggiungi al carrello</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 
-  /* 🔹 Stati di caricamento / errore */
   if (loading)
     return (
       <View style={styles.center}>
@@ -114,9 +143,8 @@ const MenuScreen: React.FC<Props> = ({ navigation }) => {
       </View>
     );
 
-  /* 🔹 Schermata principale */
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
       <FlatList
         data={products}
         keyExtractor={(item) => String(item.id)}
@@ -124,16 +152,16 @@ const MenuScreen: React.FC<Props> = ({ navigation }) => {
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
-/* 💅 Stili moderni, responsive e fluidi */
+/* 💅 Stili ottimizzati per tutti i device */
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: Colors.backgroundLight,
-    paddingTop: Platform.OS === 'ios' ? 10 : 5,
+    paddingTop: 10,
   },
   center: {
     flex: 1,
@@ -141,57 +169,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: 10,
+    marginTop: 8,
     fontSize: 16,
     color: Colors.text,
     fontWeight: '600',
   },
-  errorText: {
-    color: 'red',
-    fontSize: 16,
-  },
+  errorText: { color: 'red', fontSize: 16 },
   list: {
-    paddingHorizontal: width * 0.04,
-    paddingBottom: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
   },
   itemContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: Colors.white,
     borderRadius: 18,
     marginBottom: 14,
-    padding: CARD_PADDING,
+    padding: 12,
+    alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
     shadowRadius: 5,
-    elevation: 4,
-    borderWidth: 0.8,
-    borderColor: 'rgba(0,0,0,0.05)',
+    elevation: 3,
   },
-  leftBox: {
-    marginRight: 14,
-  },
+  leftBox: { marginRight: 12 },
   image: {
-    width: IMAGE_SIZE,
-    height: IMAGE_SIZE,
-    borderRadius: 14,
-    borderWidth: 2,
-    borderColor: Colors.primary,
+    width: 75,
+    height: 75,
+    borderRadius: 12,
   },
   placeholder: {
-    width: IMAGE_SIZE,
-    height: IMAGE_SIZE,
-    borderRadius: 14,
+    width: 75,
+    height: 75,
+    borderRadius: 12,
     backgroundColor: '#EEE',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: Colors.primary,
   },
-  placeholderText: {
-    fontSize: 28,
-  },
+  placeholderText: { fontSize: 26 },
   rightBox: {
     flex: 1,
     justifyContent: 'center',
@@ -201,14 +216,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
   name: {
-    fontSize: width * 0.045,
-    fontWeight: '800',
+    fontSize: 16,
+    fontWeight: '700',
     color: Colors.text,
-    marginBottom: 4,
+    marginRight: 6,
+  },
+  allergenIcon: {
+    fontSize: 16,
+    marginRight: 3,
   },
   price: {
-    fontSize: width * 0.04,
+    fontSize: 15,
     fontWeight: '700',
     color: Colors.secondary,
   },
@@ -217,21 +241,28 @@ const styles = StyleSheet.create({
     marginTop: 8,
     borderRadius: 8,
     overflow: 'hidden',
-    shadowColor: Colors.secondary,
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 3,
   },
   gradient: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
     borderRadius: 8,
   },
   detailText: {
     fontWeight: '700',
     color: Colors.text,
-    fontSize: width * 0.035,
-    letterSpacing: 0.3,
+    fontSize: 13,
+  },
+  addButton: {
+    backgroundColor: Colors.primary,
+    borderRadius: 8,
+    paddingVertical: 6,
+    marginTop: 8,
+    alignItems: 'center',
+  },
+  addButtonText: {
+    fontWeight: '700',
+    fontSize: 13,
+    color: Colors.text,
   },
 });
 

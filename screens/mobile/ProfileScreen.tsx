@@ -61,21 +61,39 @@ const ProfileScreen: React.FC = () => {
 
 
   const handleRedeemPoints = async () => {
-    if (points < 50) {
-      Alert.alert('Attenzione', 'Devi avere almeno 50 punti per riscattare un buono.');
+    if (points < 100) {
+      Alert.alert('Attenzione', 'Ti servono almeno 100 punti per riscattare il buono sconto del 50%.');
       return;
     }
 
-    try {
-      await api.updateLoyaltyPoints('redeem', 50, user!.id);
-      setPoints(points - 50);
-      Alert.alert('🎉 Buono riscattato!', 'Hai usato 50 punti per ottenere un buono sconto.');
-      setModalVisible(false);
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Errore', 'Impossibile riscattare i punti.');
-    }
+    Alert.alert(
+      'Conferma riscatto',
+      'Vuoi usare 100 punti per ottenere un buono sconto del 50% sul prossimo ordine?',
+      [
+        { text: 'Annulla', style: 'cancel' },
+        {
+          text: 'Conferma',
+          onPress: async () => {
+            try {
+              const response = await api.redeemDiscount(user!.id);
+              if (response.success) {
+                setPoints(points - 100);
+                await fetchPoints(); // 🔁 aggiorna subito
+                Alert.alert('🎉 Buono attivo!', 'Hai riscattato un buono sconto del 50%. Verrà applicato automaticamente al tuo prossimo ordine!');
+                setModalVisible(false);
+              } else {
+                Alert.alert('Errore', response.error || 'Impossibile completare il riscatto.');
+              }
+            } catch (error) {
+              console.error(error);
+              Alert.alert('Errore', 'Impossibile riscattare i punti.');
+            }
+          },
+        },
+      ]
+    );
   };
+
 
 
   // 🔐 Login inline
@@ -128,9 +146,12 @@ const ProfileScreen: React.FC = () => {
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>🎁 Riscatta Buono Sconto del 50% sul prossimo ordine</Text>
+              <Text style={styles.modalTitle}>🎁 Riscatta Buono Sconto</Text>
               <Text style={styles.modalSubtitle}>
                 Hai <Text style={{ fontWeight: 'bold' }}>{points}</Text> punti disponibili.
+              </Text>
+              <Text style={{ color: Colors.secondary, textAlign: 'center', marginBottom: 20 }}>
+                Usa 100 punti per ottenere un buono del 50% sul prossimo ordine!
               </Text>
 
               <TouchableOpacity
@@ -147,6 +168,7 @@ const ProfileScreen: React.FC = () => {
             </View>
           </View>
         </Modal>
+
       </SafeAreaView>
     );
   }
