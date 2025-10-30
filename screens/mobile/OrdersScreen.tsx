@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    Animated,
-    FlatList,
-    RefreshControl,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  Animated,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { api } from '../../api';
 import Header from '../../components/Header';
@@ -42,15 +42,32 @@ const OrdersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   }, [token]);
 
   const handleOrder = async (orderId: number) => {
+    const order = orders.find(o => o.order_id === orderId);
+    if (!order) return;
+
     Alert.alert('Conferma Ordine', 'Vuoi procedere con questo ordine?', [
       { text: 'Annulla', style: 'cancel' },
       {
         text: 'Ordina ora',
         onPress: async () => {
           try {
-            const response = await api.payOrder(orderId, token || undefined);
+            const response = await api.payOrder(
+              Number(order.order_id),       // forza tipo number
+              Number(order.total_amount),   // forza tipo number
+              user?.id ? Number(user.id) : undefined,
+              token || undefined
+            );
+
+
+            // 2️⃣ Controlla la risposta
             if (response.success) {
-              Alert.alert('✅ Ordine Confermato', 'Il tuo ordine è stato registrato con successo!');
+              // 3️⃣ Mostra conferma
+              Alert.alert(
+                '✅ Ordine Confermato',
+                `Hai guadagnato ${Math.floor(Number(order.total_amount))} punti fedeltà!`
+              );
+
+              // 4️⃣ Aggiorna la lista ordini
               fetchOrders();
             } else {
               Alert.alert('❌ Errore', 'Impossibile completare l’ordine.');
@@ -63,6 +80,7 @@ const OrdersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       },
     ]);
   };
+
 
   const renderStatus = (status: string) => {
     switch (status) {
@@ -139,8 +157,9 @@ const OrdersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             <TouchableOpacity
               activeOpacity={0.8}
               style={styles.payButton}
-              onPress={() => handleOrder(item.order_id)}
+              onPress={() => handleOrder(Number(item.order_id))}
             >
+
               <Text style={styles.payButtonText}>🛒 Ordina Ora</Text>
             </TouchableOpacity>
           )}

@@ -3,7 +3,7 @@ import { Order } from '../types/order';
 import { Product } from '../types/product';
 import { User } from '../types/user';
 
-const API_BASE_URL = 'http://192.168.1.51/los-cerignola-api/api'; // ✅ percorso coerente
+const API_BASE_URL = 'http://172.20.10.5/los-cerignola-api/api'; // ✅ percorso coerente
 
 export const api = {
   // 🛒 Prodotti
@@ -72,39 +72,61 @@ export const api = {
   },
 
   // 💳 Simula pagamento → elimina ordine
-  payOrder: async (orderId: number, token?: string) => {
-    const headers: HeadersInit = { 'Content-Type': 'application/json' };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
+  async payOrder(orderId: number, total: number, userId?: number, token?: string) {
+    try {
+      const response = await fetch(`${API_BASE_URL}orders?action=pay`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ order_id: orderId }),
+      });
 
-    const response = await fetch(`${API_BASE_URL}/orders?action=delete`, {
-      method: 'POST', // POST al posto di DELETE per compatibilità XAMPP
-      headers,
-      body: JSON.stringify({ order_id: orderId }),
-    });
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json(); // { success: true, message: 'Ordine eliminato con successo' }
+      const result = await response.json();
+
+      // 💰 Aggiungi punti (1€ = 1 punto)
+      if (userId && total > 0) {
+        const points = Math.floor(total);
+        await fetch(`${API_BASE_URL}loyalty`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: userId, action: 'add', points }),
+        });
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Errore payOrder:', error);
+      throw error;
+    }
   },
 
-  // 🎁 Punti fedeltà (placeholder)
-  fetchLoyaltyPoints: async (token: string) => {
-    const response = await fetch(`${API_BASE_URL}/loyalty`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+
+
+
+  // Ottiene i punti attuali dell’utente
+  fetchLoyaltyPoints: async (userId: number): Promise<{ loyalty_points: number }> => {
+    const response = await fetch(`${API_BASE_URL}loyalty?user_id=${userId}`);
     if (!response.ok) throw new Error(`HTTP error ${response.status}`);
     return await response.json();
   },
 
-  updateLoyaltyPoints: async (action: 'add' | 'redeem', points: number, token: string) => {
-    const response = await fetch(`${API_BASE_URL}/loyalty`, {
+  // Aggiunge o riscatta punti
+  updateLoyaltyPoints: async (
+    action: 'add' | 'redeem',
+    points: number,
+    userId: number
+  ): Promise<any> => {
+    const response = await fetch(`${API_BASE_URL}loyalty`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ action, points }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: userId, action, points }),
     });
     if (!response.ok) throw new Error(`HTTP error ${response.status}`);
     return await response.json();
   },
+
 };

@@ -34,23 +34,32 @@ const ProfileScreen: React.FC = () => {
 
   // 🟡 Recupera punti solo se loggato
   const fetchPoints = async () => {
-    if (!token) return;
+    if (!user) return;
     try {
       setLoading(true);
-      const data = await api.fetchLoyaltyPoints(token);
-      setPoints(data.points);
-    } catch {
+      const data = await api.fetchLoyaltyPoints(user.id);
+      setPoints(data.loyalty_points);
+    } catch (error) {
+      console.error(error);
       Alert.alert('Errore', 'Impossibile recuperare i punti fedeltà.');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchPoints();
-  }, [token]);
 
-  // 🎁 Riscatto punti
+  useEffect(() => {
+    if (!user) return;
+
+    fetchPoints(); // recupera subito
+
+    // aggiorna ogni 2 secondi
+    const interval = setInterval(fetchPoints, 20000);
+
+    return () => clearInterval(interval); // pulizia
+  }, [user, token]);
+
+
   const handleRedeemPoints = async () => {
     if (points < 50) {
       Alert.alert('Attenzione', 'Devi avere almeno 50 punti per riscattare un buono.');
@@ -58,14 +67,16 @@ const ProfileScreen: React.FC = () => {
     }
 
     try {
-      await api.updateLoyaltyPoints('redeem', 50, token!);
+      await api.updateLoyaltyPoints('redeem', 50, user!.id);
       setPoints(points - 50);
       Alert.alert('🎉 Buono riscattato!', 'Hai usato 50 punti per ottenere un buono sconto.');
       setModalVisible(false);
-    } catch {
+    } catch (error) {
+      console.error(error);
       Alert.alert('Errore', 'Impossibile riscattare i punti.');
     }
   };
+
 
   // 🔐 Login inline
   const handleLogin = async () => {
@@ -117,17 +128,17 @@ const ProfileScreen: React.FC = () => {
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>🎁 Riscatta Punti</Text>
+              <Text style={styles.modalTitle}>🎁 Riscatta Buono Sconto del 50% sul prossimo ordine</Text>
               <Text style={styles.modalSubtitle}>
                 Hai <Text style={{ fontWeight: 'bold' }}>{points}</Text> punti disponibili.
               </Text>
 
               <TouchableOpacity
-                style={[styles.redeemButton, points < 50 && { opacity: 0.5 }]}
-                disabled={points < 50}
+                style={[styles.redeemButton, points < 100 && { opacity: 0.5 }]}
+                disabled={points < 100}
                 onPress={handleRedeemPoints}
               >
-                <Text style={styles.redeemText}>Riscatta 50 punti</Text>
+                <Text style={styles.redeemText}>Riscatta 100 punti</Text>
               </TouchableOpacity>
 
               <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
