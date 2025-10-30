@@ -3,7 +3,7 @@ import { Order } from '../types/order';
 import { Product } from '../types/product';
 import { User } from '../types/user';
 
-const API_BASE_URL = 'http://192.168.1.51/los-cerignola-api/api'; // ✅ percorso coerente
+const API_BASE_URL = 'http://172.20.10.2/los-cerignola-api/api'; // ✅ percorso coerente
 
 export const api = {
   // 🛒 Prodotti
