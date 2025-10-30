@@ -45,10 +45,10 @@ const OrdersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const order = orders.find(o => o.order_id === orderId);
     if (!order) return;
 
-    Alert.alert('Conferma Ordine', 'Vuoi procedere con questo ordine?', [
+    Alert.alert('Conferma Pagamento', 'Vuoi procedere con il pagamento di questo ordine?', [
       { text: 'Annulla', style: 'cancel' },
       {
-        text: 'Ordina ora',
+        text: 'Paga ora',
         onPress: async () => {
           try {
             const response = await api.payOrder(
@@ -142,6 +142,18 @@ const OrdersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           </View>
 
           <Text style={styles.total}>💰 Totale: {Number(item.total_amount).toFixed(2)} €</Text>
+
+          {/* 🧾 Lista dei prodotti ordinati */}
+          {item.items && item.items.length > 0 && (
+            <View style={styles.itemsList}>
+              {item.items.map((product, index) => (
+                <Text key={index} style={styles.itemText}>
+                  🍕 {product.name} × {product.quantity} — {Number(product.price).toFixed(2)} €
+                </Text>
+              ))}
+            </View>
+          )}
+
           <Text style={styles.date}>
             🕒{' '}
             {new Date(item.created_at).toLocaleString('it-IT', {
@@ -153,6 +165,7 @@ const OrdersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             })}
           </Text>
 
+
           {item.status !== 'Pagato' && item.status !== 'Completato' && (
             <TouchableOpacity
               activeOpacity={0.8}
@@ -160,7 +173,7 @@ const OrdersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               onPress={() => handleOrder(Number(item.order_id))}
             >
 
-              <Text style={styles.payButtonText}>🛒 Ordina Ora</Text>
+              <Text style={styles.payButtonText}>✅ Paga Ora</Text>
             </TouchableOpacity>
           )}
         </TouchableOpacity>
@@ -174,11 +187,12 @@ const OrdersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         <Text style={styles.loginPrompt}>🔐 Effettua il login per visualizzare i tuoi ordini.</Text>
         <TouchableOpacity
           style={styles.loginButton}
-          onPress={() => navigation.navigate('Login')}
+          onPress={() => navigation.navigate('Profile')}
           activeOpacity={0.8}
         >
           <Text style={styles.loginButtonText}>Accedi</Text>
         </TouchableOpacity>
+        r
       </View>
     );
   }
@@ -259,6 +273,17 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   loginButtonText: { color: Colors.secondary, fontWeight: '700', fontSize: 16 },
+  itemsList: {
+    marginTop: 8,
+    marginBottom: 6,
+    paddingLeft: 4,
+  },
+  itemText: {
+    color: '#333',
+    fontSize: 14,
+    marginBottom: 3,
+  },
+
 });
 
 export default OrdersScreen;

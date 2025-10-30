@@ -1,11 +1,12 @@
 import { StackNavigationProp } from '@react-navigation/stack';
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Animated,
   FlatList,
   Image,
+  Modal,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -13,11 +14,11 @@ import {
   View,
 } from 'react-native';
 import { api } from '../../api';
+import Header from '../../components/Header';
 import { useCart } from '../../context/CartContext';
 import { RootStackParamList } from '../../types/navigation';
 import { Product } from '../../types/product';
 
-/* 🎨 Palette Los Cerignolas */
 const Colors = {
   primary: '#FFD60A',
   secondary: '#004AAD',
@@ -26,13 +27,25 @@ const Colors = {
   white: '#FFFFFF',
 };
 
-type MenuScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Main'>;
+// 🧀 Allergeni
+const ALLERGENS: Record<string, string[]> = {
+  Margherita: ['🌾', '🥛'],
+  Diavola: ['🌾', '🥛'],
+  Napoli: ['🌾', '🐟'],
+  Capricciosa: ['🌾', '🥛', '🍄'],
+  Prosciutto: ['🌾', '🥛'],
+};
 
-interface Props {
-  navigation: MenuScreenNavigationProp;
-}
+// Descrizioni
+const DESCRIPTIONS: Record<string, string> = {
+  Margherita: 'Pomodoro, mozzarella e basilico fresco.',
+  Diavola: 'Salame piccante e mozzarella filante.',
+  Napoli: 'Acciughe, capperi e origano pugliese.',
+  Capricciosa: 'Prosciutto, funghi, olive e carciofi.',
+  Prosciutto: 'Prosciutto cotto e mozzarella fiordilatte.',
+};
 
-/* 🖼️ Immagini locali per le pizze */
+// Immagini locali
 const pizzaImages: Record<string, any> = {
   Margherita: require('../../assets/pizze/margherita.jpg'),
   Diavola: require('../../assets/pizze/diavola.jpg'),
@@ -41,27 +54,28 @@ const pizzaImages: Record<string, any> = {
   Prosciutto: require('../../assets/pizze/prosciutto.jpg'),
 };
 
-/* 🍽️ Allergeni associati ad alcune pizze */
-const allergenIcons: Record<string, string[]> = {
-  Margherita: ['🌾', '🧀'], // farina, latticini
-  Diavola: ['🌾', '🧀', '🌶️'],
-  Napoli: ['🌾', '🍅', '🐟'],
-  Capricciosa: ['🌾', '🧀', '🥚'],
-  Prosciutto: ['🌾', '🧀', '🥩'],
-};
+type MenuScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Main'>;
 
-const MenuScreen: React.FC<Props> = ({ navigation }) => {
+const MenuScreen: React.FC<{ navigation: MenuScreenNavigationProp }> = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedPizza, setSelectedPizza] = useState<Product | null>(null);
   const { addToCart } = useCart();
 
-  /* 🔹 Caricamento prodotti */
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const fetched = await api.fetchProducts();
         setProducts(fetched.map((p: any) => ({ ...p, price: Number(p.price) })));
+
+        Animated.parallel([
+          Animated.timing(fadeAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
+          Animated.timing(slideAnim, { toValue: 0, duration: 800, useNativeDriver: true }),
+        ]).start();
       } catch (err) {
         console.error(err);
         setError('Errore durante il caricamento dei prodotti.');
@@ -72,49 +86,36 @@ const MenuScreen: React.FC<Props> = ({ navigation }) => {
     fetchProducts();
   }, []);
 
-  /* 🔹 Aggiunta al carrello */
   const handleAddToCart = (item: Product) => {
     addToCart({ id: item.id, name: item.name, price: item.price, quantity: 1 });
     Alert.alert('✅ Aggiunto al carrello', `${item.name} è stato aggiunto!`);
   };
 
-  /* 🔹 Singolo elemento */
   const renderItem = ({ item }: { item: Product }) => (
-    <View style={styles.itemContainer}>
-      <View style={styles.leftBox}>
-        {item.image ? (
-          <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
-        ) : pizzaImages[item.name] ? (
-          <Image source={pizzaImages[item.name]} style={styles.image} resizeMode="cover" />
-        ) : (
-          <View style={styles.placeholder}>
-            <Text style={styles.placeholderText}>🍕</Text>
-          </View>
-        )}
-      </View>
-
-      <View style={styles.rightBox}>
-        {/* 🔸 Nome + Allergen icons inline */}
-        <View style={styles.textRow}>
-          <View style={styles.nameRow}>
-            <Text style={styles.name}>{item.name}</Text>
-            {(allergenIcons[item.name] || ['❄️']).map((icon, i) => (
-              <Text key={i} style={styles.allergenIcon}>
-                {icon}
-              </Text>
-            ))}
-          </View>
-          <Text style={styles.price}>€{item.price.toFixed(2)}</Text>
-        </View>
-
+    <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
+      <View style={styles.itemContainer}>
         <TouchableOpacity
-          style={styles.detailButton}
-          onPress={() => navigation.navigate('ProductDetail', { product: item })}
-          activeOpacity={0.8}
+          activeOpacity={0.9}
+          onPress={() => setSelectedPizza(item)}
+          style={{ flexDirection: 'row', flex: 1 }}
         >
-          <LinearGradient colors={[Colors.primary, '#E6C200']} style={styles.gradient}>
-            <Text style={styles.detailText}>Dettagli</Text>
-          </LinearGradient>
+          <Image
+            source={pizzaImages[item.name] || { uri: item.image }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+          <View style={styles.textBox}>
+            <View style={styles.titleRow}>
+              <Text style={styles.name}>{item.name}</Text>
+              <Text style={styles.allergens}>
+                {ALLERGENS[item.name]?.join(' ') || ''}
+              </Text>
+            </View>
+            <Text style={styles.description}>
+              {DESCRIPTIONS[item.name] || 'Ingredienti selezionati e impasto artigianale.'}
+            </Text>
+            <Text style={styles.price}>€{item.price.toFixed(2)}</Text>
+          </View>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -122,10 +123,10 @@ const MenuScreen: React.FC<Props> = ({ navigation }) => {
           onPress={() => handleAddToCart(item)}
           activeOpacity={0.8}
         >
-          <Text style={styles.addButtonText}>Aggiungi al carrello</Text>
+          <Text style={styles.addButtonText}>Aggiungi</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </Animated.View>
   );
 
   if (loading)
@@ -145,6 +146,11 @@ const MenuScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <Header title="Menù" />
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>Le nostre pizze 🍕</Text>
+      </View>
+
       <FlatList
         data={products}
         keyExtractor={(item) => String(item.id)}
@@ -152,118 +158,143 @@ const MenuScreen: React.FC<Props> = ({ navigation }) => {
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
       />
+
+      {/* --- MODALE --- */}
+      <Modal
+        visible={!!selectedPizza}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setSelectedPizza(null)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Image
+              source={pizzaImages[selectedPizza?.name || ''] || { uri: selectedPizza?.image }}
+              style={styles.modalImage}
+              resizeMode="cover"
+            />
+            <Text style={styles.modalTitle}>{selectedPizza?.name}</Text>
+            <Text style={styles.modalDescription}>
+              {DESCRIPTIONS[selectedPizza?.name || ''] ||
+                'Ingredienti selezionati e impasto artigianale.'}
+            </Text>
+
+            <View style={styles.allergenLegend}>
+              <Text style={styles.legendTitle}>Allergeni:</Text>
+              <Text style={styles.legendText}>
+                🌾 Glutine   🥛 Lattosio   🧀 Formaggi   🐟 Pesce   🍄 Funghi
+              </Text>
+            </View>
+
+            <Text style={styles.modalPrice}>€{selectedPizza?.price.toFixed(2)}</Text>
+
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => {
+                handleAddToCart(selectedPizza!);
+                setSelectedPizza(null);
+              }}
+            >
+              <Text style={styles.modalButtonText}>Aggiungi al carrello</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setSelectedPizza(null)}
+              style={styles.modalClose}
+            >
+              <Text style={styles.modalCloseText}>Chiudi</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
 
-/* 💅 Stili ottimizzati per tutti i device */
+/* 💅 STILI */
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: Colors.backgroundLight,
-    paddingTop: 10,
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 8,
-    fontSize: 16,
-    color: Colors.text,
-    fontWeight: '600',
-  },
+  safeArea: { flex: 1, backgroundColor: Colors.backgroundLight },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  loadingText: { marginTop: 10, fontSize: 16, color: Colors.text, fontWeight: '600' },
   errorText: { color: 'red', fontSize: 16 },
-  list: {
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-  },
+
+  sectionHeader: { paddingVertical: 15, alignItems: 'center' },
+  sectionTitle: { fontSize: 22, fontWeight: '900', color: Colors.secondary },
+  list: { paddingHorizontal: 15, paddingBottom: 20 },
+
   itemContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: Colors.white,
-    borderRadius: 18,
+    borderRadius: 20,
     marginBottom: 14,
     padding: 12,
-    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
+    shadowRadius: 6,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: '#f6eeb8',
   },
-  leftBox: { marginRight: 12 },
-  image: {
-    width: 75,
-    height: 75,
-    borderRadius: 12,
-  },
-  placeholder: {
-    width: 75,
-    height: 75,
-    borderRadius: 12,
-    backgroundColor: '#EEE',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  placeholderText: { fontSize: 26 },
-  rightBox: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  textRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  nameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: Colors.text,
-    marginRight: 6,
-  },
-  allergenIcon: {
-    fontSize: 16,
-    marginRight: 3,
-  },
-  price: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: Colors.secondary,
-  },
-  detailButton: {
-    alignSelf: 'flex-start',
-    marginTop: 8,
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  gradient: {
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: 8,
-  },
-  detailText: {
-    fontWeight: '700',
-    color: Colors.text,
-    fontSize: 13,
-  },
+  image: { width: 80, height: 80, borderRadius: 12 },
+  textBox: { flex: 1, marginLeft: 10, justifyContent: 'center' },
+  titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  name: { fontSize: 17, fontWeight: '800', color: Colors.text },
+  allergens: { fontSize: 14, color: '#888' },
+  description: { fontSize: 13, color: Colors.secondary, marginTop: 4 },
+  price: { fontSize: 15, fontWeight: '700', color: Colors.secondary, marginTop: 6 },
   addButton: {
     backgroundColor: Colors.primary,
     borderRadius: 8,
     paddingVertical: 6,
-    marginTop: 8,
+    paddingHorizontal: 10,
+    marginLeft: 10,
+  },
+  addButtonText: { fontWeight: '700', fontSize: 13, color: Colors.text },
+
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+  modalContainer: {
+    backgroundColor: Colors.white,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    padding: 25,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  modalImage: { width: 140, height: 140, borderRadius: 15, marginBottom: 15 },
+  modalTitle: { fontSize: 22, fontWeight: '900', color: Colors.secondary },
+  modalDescription: {
+    fontSize: 15,
+    textAlign: 'center',
+    color: Colors.text,
+    marginVertical: 10,
+    lineHeight: 22,
+  },
+  allergenLegend: {
+    backgroundColor: Colors.backgroundLight,
+    borderRadius: 10,
+    padding: 10,
+    marginVertical: 10,
+    width: '90%',
     alignItems: 'center',
   },
-  addButtonText: {
-    fontWeight: '700',
-    fontSize: 13,
-    color: Colors.text,
+  legendTitle: { fontWeight: '800', color: Colors.secondary, marginBottom: 5 },
+  legendText: { fontSize: 13, color: Colors.text, textAlign: 'center' },
+  modalPrice: { fontSize: 18, fontWeight: '800', color: Colors.secondary, marginBottom: 15 },
+  modalButton: {
+    backgroundColor: Colors.primary,
+    borderRadius: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    marginTop: 5,
   },
+  modalButtonText: { color: Colors.text, fontWeight: '800', fontSize: 16 },
+  modalClose: { marginTop: 10 },
+  modalCloseText: { color: Colors.secondary, fontWeight: '600' },
 });
 
 export default MenuScreen;

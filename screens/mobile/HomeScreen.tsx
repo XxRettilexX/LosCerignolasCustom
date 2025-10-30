@@ -1,4 +1,6 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
+
 import {
   Animated,
   Dimensions,
@@ -31,6 +33,7 @@ const reviews = [
 
 const HomeScreen: React.FC = () => {
   const { user } = useAuth();
+  const navigation = useNavigation<any>();
   const floatAnim = useRef(new Animated.Value(0)).current;
   const scrollX = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef<FlatList>(null);
@@ -98,7 +101,7 @@ const HomeScreen: React.FC = () => {
               <GradientButton
                 title="Accedi ora"
                 variant="secondary"
-                onPress={() => console.log('Naviga al login')}
+                onPress={() => navigation.navigate('Profile')}
               />
             </View>
           )}

@@ -1,11 +1,11 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../types/navigation';
-import { useCart } from '../../context/CartContext';
-import { Colors } from '../../constants/Colors';
+import React from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Header from '../../components/Header';
+import { Colors } from '../../constants/Colors';
+import { useCart } from '../../context/CartContext';
+import { RootStackParamList } from '../../types/navigation';
 
 type ProductDetailScreenRouteProp = RouteProp<RootStackParamList, 'ProductDetail'>;
 type ProductDetailScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ProductDetail'>;
@@ -20,7 +20,7 @@ const ProductDetailScreen: React.FC<Props> = ({ route, navigation }) => {
   const { addToCart } = useCart();
 
   const handleAddToCart = () => {
-    addToCart(product);
+    addToCart({ ...product, quantity: 1 });
     navigation.goBack(); // Or navigate to cart: navigation.navigate('Cart');
   };
 
